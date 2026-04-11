@@ -1,0 +1,99 @@
+package com.joj.user.controller;
+
+import com.joj.common.result.Result;
+import com.joj.user.controller.dto.*;
+import com.joj.user.service.AuthService;
+import com.joj.user.service.UserService;
+import jodd.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+/**
+ * @author jzz
+ * @github <a href="https://github.com/63213885">63213885</a>
+ * @createtime 2026/4/7 23:42
+ */
+
+@Slf4j
+@RestController
+@RequestMapping("/user")
+public class AuthController {
+
+    @Resource
+    private AuthService authService;
+
+    @GetMapping("/ok")
+    public Result<String> ok() {
+        return Result.success("ok");
+    }
+
+    /**
+     * 发送短信/邮箱验证码。
+     * <p>
+     * 根据场景（注册、登录、重置密码）向指定标识（手机号或邮箱）发送一次性验证码。
+     *
+     * @param request 请求体，包含：
+     *                - identifierType：标识类型，PHONE 或 EMAIL；
+     *                - identifier：手机号或邮箱地址；
+     *                - scene：验证码使用场景（REGISTER/LOGIN/RESET_PASSWORD）。
+     * @return 响应体，包含目标标识、场景以及验证码过期秒数。
+     */
+    @PostMapping("/send-code")
+    public Result<SendCodeResponse> sendCode(@Valid @RequestBody SendCodeRequest request) {
+        SendCodeResponse sendCodeResponse = authService.sendCode(request);
+        return Result.success(sendCodeResponse);
+    }
+
+    /**
+     * 提取客户端 IP 地址。
+     * <p>
+     * 优先使用代理头：`X-Forwarded-For`（取第一个）、`X-Real-IP`；否则回退到 `request.getRemoteAddr()`。
+     *
+     * @param request HTTP 请求对象。
+     * @return 客户端 IP。
+     */
+    private String extractClientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (StringUtil.isNotBlank(forwarded)) {
+            return forwarded.split(",")[0].trim();
+        }
+        String realIp = request.getHeader("X-Real-IP");
+        if (StringUtil.isNotBlank(realIp)) {
+            return realIp.trim();
+        }
+        return request.getRemoteAddr();
+    }
+
+    /**
+     * 从请求中解析客户端信息。
+     *
+     * @param request HTTP 请求对象。
+     * @return 客户端信息（IP 与 User-Agent）。
+     */
+    private ClientInfo resolveClient(HttpServletRequest request) {
+        String ip = extractClientIp(request);
+        String ua = request.getHeader("User-Agent");
+        return new ClientInfo(ip, ua);
+    }
+
+    @PostMapping("/register")
+    public Result<Long> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
+        Long userId = authService.register(registerRequest);
+        return Result.success(userId);
+    }
+
+//    @PostMapping("/login")
+//    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+//        return Result.success();
+//    }
+//
+//    @PostMapping("/logout")
+//    public Result<Boolean> logout(HttpServletRequest request) {
+//        return Result.success();
+//    }
+
+}

@@ -1,6 +1,6 @@
 # -------------------------------
-# docker compose -p JOJ up -d
-# docker compose -p JOJ down
+# docker compose -p joj up -d
+# docker compose -p joj down
 # -------------------------------
 
 version: '3.8'
@@ -10,7 +10,7 @@ services:
   # -------------------------------
   mysql:
     image: mysql:8 # 使用的镜像
-    container_name: JOJ-mysql # 启动的实例名称
+    container_name: joj-mysql # 启动的实例名称
     environment:
       MYSQL_ROOT_PASSWORD: 666666 # root 用户密码
       TZ: Asia/Shanghai
@@ -31,7 +31,7 @@ services:
   # -------------------------------
   redis:
     image: redis:6
-    container_name: JOJ-redis
+    container_name: joj-redis
     command: redis-server --requirepass "666666"
     ports:
       - "6379:6379"

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.joj.user.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.joj.user.model.Entity.User">
+        <id column="id" property="id"/>
+
+        <result column="account" property="account"/>
+        <result column="password_hash" property="passwordHash"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+
+        <result column="role" property="role"/>
+        <result column="status" property="status"/>
+
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="bio" property="bio"/>
+        <result column="school" property="school"/>
+
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_delete" property="isDelete"/>
+
+    </resultMap>
+
+    <select id="findById" parameterType="long" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE id = #{id} LIMIT 1
+    </select>
+
+    <select id="findByAccount" parameterType="string" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE account = #{account} LIMIT 1
+    </select>
+
+    <select id="findByPhone" parameterType="string" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE phone = #{phone} LIMIT 1
+    </select>
+
+    <select id="findByEmail" parameterType="string" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE email = #{email} LIMIT 1
+    </select>
+
+    <select id="existsByAccount" parameterType="string" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM user
+                      WHERE account = #{account})
+    </select>
+    <select id="existsByPhone" parameterType="string" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM user
+                      WHERE phone = #{phone})
+    </select>
+
+    <select id="existsByEmail" parameterType="string" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM user
+                      WHERE email = #{email})
+    </select>
+
+    <insert id="insert" parameterType="com.joj.user.model.Entity.User"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (account,
+                          password_hash,
+                          phone,
+                          email,
+                          role,
+                          status,
+                          avatar_url,
+                          bio,
+                          school,
+                          last_login_time,
+                          last_login_ip,
+                          create_time,
+                          update_time,
+                          is_delete)
+        VALUES (#{account},
+                #{passwordHash},
+                #{phone},
+                #{email},
+                #{role},
+                #{status},
+                #{avatarUrl},
+                #{bio},
+                #{school},
+                #{lastLoginTime},
+                #{lastLoginIp},
+                #{createTime},
+                #{updateTime},
+                #{isDelete})
+    </insert>
+
+</mapper>

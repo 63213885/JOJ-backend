@@ -6,6 +6,8 @@ import com.joj.user.controller.dto.RegisterRequest;
 import com.joj.user.controller.dto.SendCodeRequest;
 import com.joj.user.controller.dto.SendCodeResponse;
 import com.joj.user.model.Entity.User;
+import com.joj.user.model.Vo.LoginUserVO;
+import com.joj.user.model.Vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,7 +24,9 @@ public interface AuthService {
 
     Long register(RegisterRequest registerRequest);
 
-    User login(LoginRequest loginRequest, HttpServletRequest request);
+    LoginUserVO login(LoginRequest loginRequest, HttpServletRequest request);
 
     boolean logout(HttpServletRequest request);
+
+    LoginUserVO getLoginUser(HttpServletRequest request);
 }

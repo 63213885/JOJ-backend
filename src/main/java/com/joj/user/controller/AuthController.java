@@ -2,10 +2,9 @@ package com.joj.user.controller;
 
 import com.joj.common.result.Result;
 import com.joj.user.controller.dto.*;
-import com.joj.user.model.Entity.User;
+import com.joj.user.model.Vo.LoginUserVO;
 import com.joj.user.service.AuthService;
-import com.joj.user.service.UserService;
-import jodd.util.StringUtil;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,15 +55,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Result<User> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
-        User user = authService.login(loginRequest, request);
-        return Result.success(user);
+    public Result<LoginUserVO> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+        LoginUserVO loginUserVO = authService.login(loginRequest, request);
+        return Result.success(loginUserVO);
     }
 
     @PostMapping("/logout")
     public Result<Boolean> logout(HttpServletRequest request) {
         boolean ok = authService.logout(request);
         return Result.success(ok);
+    }
+
+    @GetMapping("/me")
+    public Result<LoginUserVO> getLoginUser(HttpServletRequest request) {
+        LoginUserVO loginUserVO = authService.getLoginUser(request);
+        return Result.success(loginUserVO);
     }
 
 }

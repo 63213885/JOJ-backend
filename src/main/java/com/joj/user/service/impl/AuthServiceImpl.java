@@ -7,6 +7,8 @@ import com.joj.user.mapper.UserMapper;
 import com.joj.user.model.ClientInfo;
 import com.joj.user.model.Entity.User;
 import com.joj.user.model.IdentifierType;
+import com.joj.user.model.Vo.LoginUserVO;
+import com.joj.user.model.Vo.UserVO;
 import com.joj.user.service.AuthService;
 import com.joj.user.service.UserService;
 import com.joj.user.verification.model.SendCodeResult;
@@ -231,7 +233,7 @@ public class AuthServiceImpl implements AuthService {
         return new ClientInfo(ip, ua);
     }
 
-    public User login(LoginRequest loginRequest, HttpServletRequest request) {
+    public LoginUserVO login(LoginRequest loginRequest, HttpServletRequest request) {
         String account = loginRequest.getAccount();
         String password = loginRequest.getPassword();
         IdentifierType identifierType = loginRequest.getIdentifierType();
@@ -293,7 +295,8 @@ public class AuthServiceImpl implements AuthService {
         user = userService.updateIP(user, clientInfo);
         // 3. 记录用户的登录态
         request.getSession().setAttribute("user_login", user);
-        return user;
+
+        return LoginUserVO.from(user);
     }
 
     public boolean logout(HttpServletRequest request) {
@@ -312,4 +315,20 @@ public class AuthServiceImpl implements AuthService {
         log.info("用户已退出登录");
         return true;
     }
+
+    public LoginUserVO getLoginUser(HttpServletRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求对象不能为空");
+        }
+        if (request.getSession() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "会话对象不能为空");
+        }
+        Object userObj = request.getSession().getAttribute("user_login");
+        if (userObj == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
+        }
+        User user = (User) userObj;
+        return LoginUserVO.from(user);
+    }
+
 }

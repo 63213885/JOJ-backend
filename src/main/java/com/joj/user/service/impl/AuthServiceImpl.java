@@ -230,6 +230,7 @@ public class AuthServiceImpl implements AuthService {
         String ua = request.getHeader("User-Agent");
         return new ClientInfo(ip, ua);
     }
+
     public User login(LoginRequest loginRequest, HttpServletRequest request) {
         String account = loginRequest.getAccount();
         String password = loginRequest.getPassword();
@@ -295,4 +296,20 @@ public class AuthServiceImpl implements AuthService {
         return user;
     }
 
+    public boolean logout(HttpServletRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求对象不能为空");
+        }
+        if (request.getSession() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "会话对象不能为空");
+        }
+        if (request.getSession().getAttribute("user_login") == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
+        }
+        // 移除登录态
+        // request.getSession().removeAttribute("user_login");
+        request.getSession().invalidate();
+        log.info("用户已退出登录");
+        return true;
+    }
 }

@@ -24,4 +24,5 @@ public interface AuthService {
 
     User login(LoginRequest loginRequest, HttpServletRequest request);
 
+    boolean logout(HttpServletRequest request);
 }

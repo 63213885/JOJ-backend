@@ -60,10 +60,11 @@ public class AuthController {
         User user = authService.login(loginRequest, request);
         return Result.success(user);
     }
-//
-//    @PostMapping("/logout")
-//    public Result<Boolean> logout(HttpServletRequest request) {
-//        return Result.success();
-//    }
+
+    @PostMapping("/logout")
+    public Result<Boolean> logout(HttpServletRequest request) {
+        boolean ok = authService.logout(request);
+        return Result.success(ok);
+    }
 
 }

@@ -1,10 +1,13 @@
 package com.joj.user.service;
 
 import com.joj.common.result.Result;
+import com.joj.user.controller.dto.LoginRequest;
 import com.joj.user.controller.dto.RegisterRequest;
 import com.joj.user.controller.dto.SendCodeRequest;
 import com.joj.user.controller.dto.SendCodeResponse;
+import com.joj.user.model.Entity.User;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -15,8 +18,10 @@ import javax.validation.Valid;
 
 public interface AuthService {
 
-    SendCodeResponse sendCode(@Valid SendCodeRequest request);
+    SendCodeResponse sendCode(SendCodeRequest request);
 
-    Long register(@Valid RegisterRequest registerRequest);
+    Long register(RegisterRequest registerRequest);
+
+    User login(LoginRequest loginRequest, HttpServletRequest request);
 
 }

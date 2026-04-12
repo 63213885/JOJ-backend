@@ -1,5 +1,6 @@
 package com.joj.user.controller.dto;
 
+import com.joj.user.model.IdentifierType;
 import lombok.Data;
 
 /**
@@ -13,5 +14,11 @@ public class LoginRequest {
     private String account;
 
     private String password;
+
+    IdentifierType identifierType;
+
+    String identifier;
+
+    String code;
 
 }

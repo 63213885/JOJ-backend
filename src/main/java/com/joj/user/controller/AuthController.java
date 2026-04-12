@@ -2,6 +2,7 @@ package com.joj.user.controller;
 
 import com.joj.common.result.Result;
 import com.joj.user.controller.dto.*;
+import com.joj.user.model.Entity.User;
 import com.joj.user.service.AuthService;
 import com.joj.user.service.UserService;
 import jodd.util.StringUtil;
@@ -48,48 +49,17 @@ public class AuthController {
         return Result.success(sendCodeResponse);
     }
 
-    /**
-     * 提取客户端 IP 地址。
-     * <p>
-     * 优先使用代理头：`X-Forwarded-For`（取第一个）、`X-Real-IP`；否则回退到 `request.getRemoteAddr()`。
-     *
-     * @param request HTTP 请求对象。
-     * @return 客户端 IP。
-     */
-    private String extractClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (StringUtil.isNotBlank(forwarded)) {
-            return forwarded.split(",")[0].trim();
-        }
-        String realIp = request.getHeader("X-Real-IP");
-        if (StringUtil.isNotBlank(realIp)) {
-            return realIp.trim();
-        }
-        return request.getRemoteAddr();
-    }
-
-    /**
-     * 从请求中解析客户端信息。
-     *
-     * @param request HTTP 请求对象。
-     * @return 客户端信息（IP 与 User-Agent）。
-     */
-    private ClientInfo resolveClient(HttpServletRequest request) {
-        String ip = extractClientIp(request);
-        String ua = request.getHeader("User-Agent");
-        return new ClientInfo(ip, ua);
-    }
-
     @PostMapping("/register")
     public Result<Long> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
         Long userId = authService.register(registerRequest);
         return Result.success(userId);
     }
 
-//    @PostMapping("/login")
-//    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
-//        return Result.success();
-//    }
+    @PostMapping("/login")
+    public Result<User> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+        User user = authService.login(loginRequest, request);
+        return Result.success(user);
+    }
 //
 //    @PostMapping("/logout")
 //    public Result<Boolean> logout(HttpServletRequest request) {

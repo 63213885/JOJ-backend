@@ -2,11 +2,9 @@ package com.joj.user.service.impl;
 
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
-import com.joj.common.result.Result;
-import com.joj.user.controller.dto.RegisterRequest;
-import com.joj.user.controller.dto.SendCodeRequest;
-import com.joj.user.controller.dto.SendCodeResponse;
+import com.joj.user.controller.dto.*;
 import com.joj.user.mapper.UserMapper;
+import com.joj.user.model.ClientInfo;
 import com.joj.user.model.Entity.User;
 import com.joj.user.model.IdentifierType;
 import com.joj.user.service.AuthService;
@@ -17,12 +15,14 @@ import com.joj.user.verification.model.VerificationCodeStatus;
 import com.joj.user.verification.model.VerificationScene;
 import com.joj.user.verification.service.VerificationService;
 import com.joj.user.verification.util.IdentifierValidator;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Locale;
 
@@ -198,4 +198,101 @@ public class AuthServiceImpl implements AuthService {
         User newUser = userService.createUser(user);
         return newUser.getId();
     }
+
+    /**
+     * 提取客户端 IP 地址。
+     * <p>
+     * 优先使用代理头：`X-Forwarded-For`（取第一个）、`X-Real-IP`；否则回退到 `request.getRemoteAddr()`。
+     *
+     * @param request HTTP 请求对象。
+     * @return 客户端 IP。
+     */
+    private String extractClientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (StringUtil.isNotBlank(forwarded)) {
+            return forwarded.split(",")[0].trim();
+        }
+        String realIp = request.getHeader("X-Real-IP");
+        if (StringUtil.isNotBlank(realIp)) {
+            return realIp.trim();
+        }
+        return request.getRemoteAddr();
+    }
+
+    /**
+     * 从请求中解析客户端信息。
+     *
+     * @param request HTTP 请求对象。
+     * @return 客户端信息（IP 与 User-Agent）。
+     */
+    private ClientInfo resolveClient(HttpServletRequest request) {
+        String ip = extractClientIp(request);
+        String ua = request.getHeader("User-Agent");
+        return new ClientInfo(ip, ua);
+    }
+    public User login(LoginRequest loginRequest, HttpServletRequest request) {
+        String account = loginRequest.getAccount();
+        String password = loginRequest.getPassword();
+        IdentifierType identifierType = loginRequest.getIdentifierType();
+        String identifier = loginRequest.getIdentifier();
+        String code = loginRequest.getCode();
+
+        ClientInfo clientInfo = resolveClient(request);
+
+        User user = null;
+        if (account != null && password != null) {
+            // 走账号密码登录
+            log.info("尝试账号密码登录，账号：{}", account);
+
+            if (identifierType != null || identifier != null || code != null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数类型错误，账号密码登录不应提供标识类型、标识和验证码");
+            }
+            user = userService.findByAccount(account);
+            if (user == null) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "该账号未注册");
+            }
+            if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "密码错误");
+            }
+        } else if (identifierType != null && identifier != null && code != null) {
+            // 走验证码登录
+            log.info("尝试验证码登录，标识类型：{}，标识：{}", identifierType, identifier);
+
+            if (account != null || password != null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数类型错误，验证码登录不应提供账号和密码");
+            }
+
+            // 检查验证方式是否合法
+            validateIdentifier(identifierType, identifier);
+            // 标准化验证账号文本
+            identifier = normalizeIdentifier(identifierType, identifier);
+            // 核验验证码
+            ensureVerificationSuccess(verificationService.verify(VerificationScene.LOGIN, identifierType, identifier, code));
+            log.info("验证码校验成功，开始查询用户");
+
+            if (identifierType == identifierType.PHONE) {
+                user = userService.findByPhone(identifier);
+            } else if (identifierType == identifierType.EMAIL) {
+                user = userService.findByEmail(identifier);
+            } else {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "未知的标识类型");
+            }
+            if (user == null) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "手机号/邮箱未注册");
+            }
+        } else {
+            log.info("参数不完整，无法确定登录方式，尝试自动识别登录方式");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不完整，无法确定登录方式");
+        }
+
+        if (user.getStatus() == 1) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "账号已封禁");
+        }
+
+        user = userService.updateIP(user, clientInfo);
+        // 3. 记录用户的登录态
+        request.getSession().setAttribute("user_login", user);
+        return user;
+    }
+
 }

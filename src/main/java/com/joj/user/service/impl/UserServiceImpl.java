@@ -1,6 +1,7 @@
 package com.joj.user.service.impl;
 
 import com.joj.user.mapper.UserMapper;
+import com.joj.user.model.ClientInfo;
 import com.joj.user.model.Entity.User;
 import com.joj.user.service.UserService;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,58 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
+//    增
+    /**
+     * 创建用户，写入创建与更新时间并持久化。
+     *
+     * @param user 待创建的用户实体。
+     * @return 持久化后的用户实体。
+     */
+    @Transactional
+    public User createUser(User user) {
+        LocalDateTime now = LocalDateTime.now();
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        userMapper.insert(user);
+        return user;
+    }
+
+//    删
+    /**
+     * 根据 ID 删除用户。
+     * @param id
+     */
+    @Transactional
+    public void deleteById(long id) {
+        userMapper.deleteById(id, LocalDateTime.now());
+    }
+
+//    改
+    /**
+     * 更新用户信息，写入更新时间并持久化。
+     * @param user
+     */
+    @Transactional
+    public void updateUser(User user) {
+        userMapper.updateById(user);
+    }
+
+    /**
+     * 更新用户的最后登录 IP 和更新时间。
+     *
+     * @param user
+     * @return
+     */
+    @Transactional
+    public User updateIP(User user, ClientInfo clientInfo) {
+        LocalDateTime now = LocalDateTime.now();
+        user.setLastLoginTime(now);
+        user.setLastLoginIp(clientInfo.getIp());
+        userMapper.updateById(user);
+        return user;
+    }
+
+//    查
     /**
      * 根据 ID 查询用户。
      *
@@ -92,21 +145,6 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userMapper.existsByEmail(email);
-    }
-
-    /**
-     * 创建用户，写入创建与更新时间并持久化。
-     *
-     * @param user 待创建的用户实体。
-     * @return 持久化后的用户实体。
-     */
-    @Transactional
-    public User createUser(User user) {
-        LocalDateTime now = LocalDateTime.now();
-        user.setCreateTime(now);
-        user.setUpdateTime(now);
-        userMapper.insert(user);
-        return user;
     }
 
 }

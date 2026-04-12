@@ -1,4 +1,4 @@
-package com.joj.user.controller.dto;
+package com.joj.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

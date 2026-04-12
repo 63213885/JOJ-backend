@@ -6,6 +6,7 @@ package com.joj.user.service;
  * @createtime 2026/4/9 21:34
  */
 
+import com.joj.user.model.ClientInfo;
 import com.joj.user.model.Entity.User;
 
 /**
@@ -13,6 +14,18 @@ import com.joj.user.model.Entity.User;
  */
 public interface UserService {
 
+    // 增
+    User createUser(User user);
+
+    // 删
+    void deleteById(long id);
+
+    // 改
+    void updateUser(User user);
+
+    User updateIP(User user, ClientInfo clientInfo);
+
+    // 查
     User findById(long id);
 
     User findByAccount(String account);
@@ -27,6 +40,5 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
-    User createUser(User user);
 
 }

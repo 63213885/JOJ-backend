@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.joj.user.mapper.UserMapper">
+<mapper namespace="com.joj.user.auth.mapper.UserMapper">
 
-    <resultMap id="UserResultMap" type="com.joj.user.model.Entity.User">
+    <resultMap id="UserResultMap" type="com.joj.user.auth.model.Entity.User">
         <id column="id" property="id"/>
 
         <result column="account" property="account"/>
@@ -27,7 +27,7 @@
     </resultMap>
 
 <!--    增-->
-    <insert id="insert" parameterType="com.joj.user.model.Entity.User"
+    <insert id="insert" parameterType="com.joj.user.auth.model.Entity.User"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (account,
                           password_hash,
@@ -68,7 +68,7 @@
     </update>
 
 <!--    改-->
-    <update id="updateById" parameterType="com.joj.user.model.Entity.User">
+    <update id="updateById" parameterType="com.joj.user.auth.model.Entity.User">
         UPDATE user
         <set>
             <if test="account != null">account = #{account},</if>

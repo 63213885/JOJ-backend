@@ -1,0 +1,38 @@
+package com.joj.user.auth.verification.util;
+
+import java.util.regex.Pattern;
+
+/**
+ * @author jzz
+ * @github <a href="https://github.com/63213885">63213885</a>
+ * @createtime 2026/4/9 21:20
+ */
+
+public final class IdentifierValidator {
+
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^1\\d{10}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$", Pattern.CASE_INSENSITIVE);
+
+    private IdentifierValidator() {
+    }
+
+    /**
+     * 校验手机号格式（中国大陆 11 位，以 1 开头）。
+     *
+     * @param phone 手机号字符串。
+     * @return 是否匹配手机号正则。
+     */
+    public static boolean isValidPhone(String phone) {
+        return phone != null && PHONE_PATTERN.matcher(phone).matches();
+    }
+
+    /**
+     * 校验邮箱格式（大小写不敏感）。
+     *
+     * @param email 邮箱字符串。
+     * @return 是否匹配邮箱正则。
+     */
+    public static boolean isValidEmail(String email) {
+        return email != null && EMAIL_PATTERN.matcher(email).matches();
+    }
+}

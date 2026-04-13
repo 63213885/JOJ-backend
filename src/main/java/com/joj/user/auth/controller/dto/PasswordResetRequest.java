@@ -1,0 +1,26 @@
+package com.joj.user.auth.controller.dto;
+
+import com.joj.user.auth.model.IdentifierType;
+import lombok.Data;
+
+/**
+ * @author jzz
+ * @github <a href="https://github.com/63213885">63213885</a>
+ * @createtime 2026/4/13 14:16
+ */
+@Data
+public class PasswordResetRequest {
+
+    private String account;
+
+    private String newPassword;
+
+    private String confirmPassword;
+
+    IdentifierType identifierType;
+
+    String identifier;
+
+    String code;
+
+}

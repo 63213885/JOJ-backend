@@ -1,7 +1,7 @@
 package com.joj.user.auth.service;
 
 import com.joj.user.auth.controller.dto.*;
-import com.joj.user.auth.model.Vo.LoginUserVO;
+import com.joj.user.auth.controller.dto.LoginUserVO;
 
 import javax.servlet.http.HttpServletRequest;
 

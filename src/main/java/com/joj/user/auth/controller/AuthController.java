@@ -2,7 +2,7 @@ package com.joj.user.auth.controller;
 
 import com.joj.common.result.Result;
 import com.joj.user.auth.controller.dto.*;
-import com.joj.user.auth.model.Vo.LoginUserVO;
+import com.joj.user.auth.controller.dto.LoginUserVO;
 import com.joj.user.auth.service.AuthService;
 
 import lombok.extern.slf4j.Slf4j;

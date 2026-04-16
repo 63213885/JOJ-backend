@@ -6,8 +6,9 @@ package com.joj.user.auth.service;
  * @createtime 2026/4/9 21:34
  */
 
-import com.joj.user.auth.model.ClientInfo;
 import com.joj.user.auth.model.Entity.User;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 用户服务接口。
@@ -23,7 +24,9 @@ public interface UserService {
     // 改
     void updateUser(User user);
 
-    User updateIP(User user, ClientInfo clientInfo);
+    User updateIP(User user, HttpServletRequest request);
+
+    void updateAvatar(Long userId, String url);
 
     // 查
     User findById(long id);
@@ -39,6 +42,5 @@ public interface UserService {
     boolean existsByPhone(String phone);
 
     boolean existsByEmail(String email);
-
 
 }

@@ -3,11 +3,9 @@ package com.joj.user.auth.service.impl;
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
 import com.joj.user.auth.controller.dto.*;
-import com.joj.user.auth.mapper.UserMapper;
-import com.joj.user.auth.model.ClientInfo;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.model.IdentifierType;
-import com.joj.user.auth.model.Vo.LoginUserVO;
+import com.joj.user.auth.controller.dto.LoginUserVO;
 import com.joj.user.auth.service.AuthService;
 import com.joj.user.auth.service.UserService;
 import com.joj.user.auth.verification.model.SendCodeResult;
@@ -16,11 +14,12 @@ import com.joj.user.auth.verification.model.VerificationCodeStatus;
 import com.joj.user.auth.verification.model.VerificationScene;
 import com.joj.user.auth.verification.service.VerificationService;
 import com.joj.user.auth.verification.util.IdentifierValidator;
-import jodd.util.StringUtil;
+import com.joj.user.profile.service.UserStatsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,10 +40,10 @@ public class AuthServiceImpl implements AuthService {
     private UserService userService;
     @Resource
     private VerificationService verificationService;
-    @Autowired
-    private UserMapper userMapper;
     @Resource
     private PasswordEncoder passwordEncoder;
+    @Resource
+    private UserStatsService userStatsService;
 
     /**
      * 校验标识（手机号/邮箱）的格式。
@@ -148,6 +147,7 @@ public class AuthServiceImpl implements AuthService {
         throw new BusinessException(ErrorCode.PARAMS_ERROR, "验证码校验失败");
     }
 
+    @Transactional
     public Long register(@Valid RegisterRequest registerRequest) {
         String account = registerRequest.getAccount();
         String password = registerRequest.getPassword();
@@ -197,39 +197,8 @@ public class AuthServiceImpl implements AuthService {
         user.setIsDelete(0);
 
         User newUser = userService.createUser(user);
+        userStatsService.createUserStats(newUser.getId());
         return newUser.getId();
-    }
-
-    /**
-     * 提取客户端 IP 地址。
-     * <p>
-     * 优先使用代理头：`X-Forwarded-For`（取第一个）、`X-Real-IP`；否则回退到 `request.getRemoteAddr()`。
-     *
-     * @param request HTTP 请求对象。
-     * @return 客户端 IP。
-     */
-    private String extractClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (StringUtil.isNotBlank(forwarded)) {
-            return forwarded.split(",")[0].trim();
-        }
-        String realIp = request.getHeader("X-Real-IP");
-        if (StringUtil.isNotBlank(realIp)) {
-            return realIp.trim();
-        }
-        return request.getRemoteAddr();
-    }
-
-    /**
-     * 从请求中解析客户端信息。
-     *
-     * @param request HTTP 请求对象。
-     * @return 客户端信息（IP 与 User-Agent）。
-     */
-    private ClientInfo resolveClient(HttpServletRequest request) {
-        String ip = extractClientIp(request);
-        String ua = request.getHeader("User-Agent");
-        return new ClientInfo(ip, ua);
     }
 
     public LoginUserVO login(LoginRequest loginRequest, HttpServletRequest request) {
@@ -238,8 +207,6 @@ public class AuthServiceImpl implements AuthService {
         IdentifierType identifierType = loginRequest.getIdentifierType();
         String identifier = loginRequest.getIdentifier();
         String code = loginRequest.getCode();
-
-        ClientInfo clientInfo = resolveClient(request);
 
         User user = null;
         if (account != null && password != null) {
@@ -291,7 +258,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "账号已封禁");
         }
 
-        user = userService.updateIP(user, clientInfo);
+        user = userService.updateIP(user, request);
         // 3. 记录用户的登录态
         request.getSession().setAttribute("user_login", user);
 

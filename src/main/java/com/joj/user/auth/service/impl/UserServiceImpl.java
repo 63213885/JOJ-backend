@@ -1,13 +1,14 @@
 package com.joj.user.auth.service.impl;
 
 import com.joj.user.auth.mapper.UserMapper;
-import com.joj.user.auth.model.ClientInfo;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.service.UserService;
+import com.joj.user.auth.util.IpUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 /**
@@ -66,13 +67,21 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Transactional
-    public User updateIP(User user, ClientInfo clientInfo) {
+    public User updateIP(User user, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
         user.setLastLoginTime(now);
-        user.setLastLoginIp(clientInfo.getIp());
+        user.setLastLoginIp(IpUtil.getClientIp(request));
         user.setUpdateTime(now);
         userMapper.updateById(user);
         return user;
+    }
+
+    public void updateAvatar(Long userId, String url) {
+        User user = new User();
+        user.setId(userId);
+        user.setAvatarUrl(url);
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.updateById(user);
     }
 
 //    查

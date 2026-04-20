@@ -59,6 +59,8 @@ public class ProfileServiceImpl implements ProfileService {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
         }
         User user = (User) userObj;
+        // todo 这里是从redis session中拿的用户信息，可能有数据不一致问题。
+
         UserDetailVO userDetailVO = UserDetailVO.from(user);
         if (StringUtils.hasText(userDetailVO.getPasswordHash())) {
             userDetailVO.setPasswordHash("1");
@@ -67,7 +69,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
         if (StringUtils.hasText(userDetailVO.getPhone())) {
             String phone = userDetailVO.getPhone();
-            userDetailVO.setPhone(phone.substring(0, 3) + "******" + phone.substring(9));
+            userDetailVO.setPhone(phone.substring(0, 3) + "*****" + phone.substring(8));
         }
         return userDetailVO;
     }

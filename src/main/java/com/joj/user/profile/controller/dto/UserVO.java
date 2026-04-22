@@ -1,7 +1,7 @@
 package com.joj.user.profile.controller.dto;
 
 import com.joj.user.auth.model.Entity.User;
-import com.joj.user.profile.model.Entity.UserStats;
+import com.joj.user.counter.model.UserStats;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,6 +55,15 @@ public class UserVO implements Serializable {
 
     private Integer contestCount;
 
+
+    public static UserVO from(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return userVO;
+    }
 
     public static UserVO from(User user, UserStats userStats) {
         if (user == null || userStats == null) {

@@ -4,12 +4,14 @@ import com.joj.user.auth.mapper.UserMapper;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.service.UserService;
 import com.joj.user.auth.util.IpUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author jzz
@@ -154,6 +156,11 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userMapper.existsByEmail(email);
+    }
+
+    @Transactional
+    public List<User> listByIds(List<Long> ids) {
+        return userMapper.listByIds(ids);
     }
 
 }

@@ -7,8 +7,10 @@ package com.joj.user.auth.service;
  */
 
 import com.joj.user.auth.model.Entity.User;
+import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户服务接口。
@@ -42,5 +44,7 @@ public interface UserService {
     boolean existsByPhone(String phone);
 
     boolean existsByEmail(String email);
+
+    List<User> listByIds(List<Long> ids);
 
 }

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author jzz
@@ -38,5 +39,7 @@ public interface UserMapper {
     boolean existsByPhone(@Param("phone") String phone);
 
     boolean existsByEmail(@Param("email") String email);
+
+    List<User> listByIds(@Param("ids") List<Long> ids);
 
 }

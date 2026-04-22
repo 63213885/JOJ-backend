@@ -1,4 +1,4 @@
-package com.joj.user.profile.model.Entity;
+package com.joj.user.counter.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

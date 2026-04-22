@@ -1,4 +1,4 @@
-package com.joj.user.profile.service;
+package com.joj.user.profile.storage.service;
 
 import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
@@ -7,7 +7,7 @@ import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
-import com.joj.user.profile.config.OssProperties;
+import com.joj.user.profile.storage.config.OssProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +43,7 @@ public class OssStorageService {
         return "https://" + props.getBucket() + "." + props.getEndpoint() + "/" + objectKey;
     }
 
-    public String uploadAvatar(String account, MultipartFile file) {
+    public String uploadAvatar(Long id, MultipartFile file) {
         ensureConfigured();
 
         String original = file.getOriginalFilename();
@@ -51,7 +51,7 @@ public class OssStorageService {
         if (original != null && original.contains(".")) {
             ext = original.substring(original.lastIndexOf('.'));
         }
-        String objectKey = props.getFolder() + "/" + account + "-" + Instant.now().toEpochMilli() + ext;
+        String objectKey = props.getFolder() + "/" + id + "-" + Instant.now().toEpochMilli() + ext;
 
         OSS client = new OSSClientBuilder().build(props.getEndpoint(), props.getAccessKeyId(), props.getAccessKeySecret());
 

@@ -14,7 +14,7 @@ import com.joj.user.auth.verification.model.VerificationCodeStatus;
 import com.joj.user.auth.verification.model.VerificationScene;
 import com.joj.user.auth.verification.service.VerificationService;
 import com.joj.user.auth.verification.util.IdentifierValidator;
-import com.joj.user.profile.service.UserStatsService;
+import com.joj.user.counter.service.UserStatsService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -282,21 +282,6 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
-    public LoginUserVO getLoginUser(HttpServletRequest request) {
-        if (request == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求对象不能为空");
-        }
-        if (request.getSession() == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "会话对象不能为空");
-        }
-        Object userObj = request.getSession().getAttribute("user_login");
-        if (userObj == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
-        User user = (User) userObj;
-        return LoginUserVO.from(user);
-    }
-
     public Boolean resetPassword(PasswordResetRequest passwordResetRequest, HttpServletRequest request) {
         String account = passwordResetRequest.getAccount();
         String newPassword = passwordResetRequest.getNewPassword();
@@ -341,6 +326,18 @@ public class AuthServiceImpl implements AuthService {
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userService.updateUser(user);
         return true;
+    }
+
+    public User getLoginUser(HttpServletRequest request) {
+        if (request == null || request.getSession() == null || request.getSession().getAttribute("user_login") == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无用户信息");
+        }
+        Object userObj = request.getSession().getAttribute("user_login");
+        if (userObj == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
+        }
+        User user = (User) userObj;
+        return user;
     }
 
 }

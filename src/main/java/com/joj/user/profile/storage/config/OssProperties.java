@@ -1,4 +1,4 @@
-package com.joj.user.profile.config;
+package com.joj.user.profile.storage.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

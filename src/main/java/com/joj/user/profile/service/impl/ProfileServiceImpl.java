@@ -4,13 +4,13 @@ import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.util.IpUtil;
+import com.joj.user.counter.service.UserStatsService;
 import com.joj.user.profile.controller.dto.UpdateProfileDTO;
 import com.joj.user.profile.controller.dto.UserDetailVO;
 import com.joj.user.profile.controller.dto.UserVO;
 import com.joj.user.auth.service.UserService;
-import com.joj.user.profile.mapper.UserStatsMapper;
-import com.joj.user.profile.model.Entity.UserStats;
-import com.joj.user.profile.service.OssStorageService;
+import com.joj.user.counter.model.UserStats;
+import com.joj.user.profile.storage.service.OssStorageService;
 import com.joj.user.profile.service.ProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Resource
     private UserService userService;
     @Resource
-    private UserStatsMapper userStatsMapper;
+    private UserStatsService userStatsService;
     @Resource
     private OssStorageService ossStorageService;
 
@@ -43,7 +43,7 @@ public class ProfileServiceImpl implements ProfileService {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
-        UserStats userStats = userStatsMapper.findById(user.getId());
+        UserStats userStats = userStatsService.findByUserId(user.getId());
         if (userStats == null) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "用户统计信息不存在");
         }
@@ -109,7 +109,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
         }
         User user = (User) userObj;
-        String url = ossStorageService.uploadAvatar(user.getAccount(), file);
+        String url = ossStorageService.uploadAvatar(user.getId(), file);
         userService.updateAvatar(user.getId(), url);
         return url;
     }

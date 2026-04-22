@@ -1,11 +1,8 @@
 package com.joj.user.profile.mapper;
 
-import com.joj.user.auth.model.Entity.User;
-import com.joj.user.profile.model.Entity.UserStats;
+import com.joj.user.counter.model.UserStats;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.time.LocalDateTime;
 
 /**
  * @author jzz
@@ -24,6 +21,26 @@ public interface UserStatsMapper {
 
     // 改
     void updateById(UserStats UserStats);
+
+    void incrementSubmitCount(@Param("userId") Long userId);
+
+    void incrementAcceptedCount(@Param("userId") Long userId);
+
+    void incrementSolvedCount(@Param("userId") Long userId);
+
+    void updateFollowerCount(@Param("userId") Long userId, @Param("delta") int delta);
+
+    void updateFollowingCount(@Param("userId") Long userId, @Param("delta") int delta);
+
+    void updateRating(@Param("userId") Long userId, @Param("delta") int delta);
+
+    void incrementContestCount(@Param("userId") Long userId);
+
+    void incrementCourseCount(@Param("userId") Long userId);
+
+    void incrementPkCount(@Param("userId") Long userId);
+
+    void incrementPkWinCount(@Param("userId") Long userId);
 
     // 查
     UserStats findById(@Param("userId") Long userId);

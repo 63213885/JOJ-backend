@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.joj.user.profile.mapper.UserStatsMapper">
 
-    <resultMap id="UserStatsResultMap" type="com.joj.user.profile.model.Entity.UserStats">
+    <resultMap id="UserStatsResultMap" type="com.joj.user.counter.model.UserStats">
         <id property="userId" column="user_id"/>
 
         <result property="submitCount" column="submit_count"/>
@@ -55,6 +55,7 @@
                 #{updateTime})
     </insert>
 
+<!--    改-->
     <update id="updateById">
         update user_stats
         <set>
@@ -72,6 +73,70 @@
             update_time = #{updateTime}
         </set>
         where user_id = #{userId}
+    </update>
+
+
+    <update id="incrementSubmitCount">
+        UPDATE user_stats
+        SET submit_count = submit_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementAcceptedCount">
+        UPDATE user_stats
+        SET accepted_count = accepted_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementSolvedCount">
+        UPDATE user_stats
+        SET solved_count = solved_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <update id="updateFollowerCount">
+        UPDATE user_stats
+        SET follower_count = GREATEST(0, follower_count + #{delta})
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateFollowingCount">
+        UPDATE user_stats
+        SET following_count = GREATEST(0, following_count + #{delta})
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <update id="updateRating">
+        UPDATE user_stats
+        SET rating = GREATEST(0, rating + #{delta})
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementContestCount">
+        UPDATE user_stats
+        SET contest_count = contest_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <update id="incrementCourseCount">
+        UPDATE user_stats
+        SET course_count = course_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementPkCount">
+        UPDATE user_stats
+        SET pk_count = pk_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementPkWinCount">
+        UPDATE user_stats
+        SET pk_win_count = pk_win_count + 1
+        WHERE user_id = #{userId}
     </update>
 
     <!-- 查询 -->

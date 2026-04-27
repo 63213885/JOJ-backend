@@ -5,8 +5,6 @@ import com.joj.user.profile.controller.dto.UserDetailVO;
 import com.joj.user.profile.controller.dto.UserVO;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author jzz
  * @github <a href="https://github.com/63213885">63213885</a>
@@ -17,10 +15,10 @@ public interface ProfileService {
 
     UserVO getPublicProfile(String account);
 
-    UserDetailVO getPrivateProfile(HttpServletRequest request);
+    UserDetailVO getPrivateProfile();
 
-    void updateProfile(UpdateProfileDTO updateProfileDTO, HttpServletRequest request);
+    void updateProfile(UpdateProfileDTO updateProfileDTO);
 
-    String uploadAvatar(MultipartFile file, HttpServletRequest request);
+    String uploadAvatar(MultipartFile file);
 
 }

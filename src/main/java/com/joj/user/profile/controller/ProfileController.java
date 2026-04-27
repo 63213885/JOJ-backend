@@ -1,5 +1,6 @@
 package com.joj.user.profile.controller;
 
+import com.joj.common.annotation.AuthCheck;
 import com.joj.common.result.Result;
 import com.joj.user.profile.controller.dto.UpdateProfileDTO;
 import com.joj.user.profile.controller.dto.UserDetailVO;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author jzz
@@ -32,21 +32,24 @@ public class ProfileController {
         return Result.success(userVO);
     }
 
+    @AuthCheck
     @GetMapping("/info")
-    public Result<UserDetailVO> getPrivateProfile(HttpServletRequest request) {
-        UserDetailVO userDetailVO = profileService.getPrivateProfile(request);
+    public Result<UserDetailVO> getPrivateProfile() {
+        UserDetailVO userDetailVO = profileService.getPrivateProfile();
         return Result.success(userDetailVO);
     }
 
+    @AuthCheck
     @PutMapping("/info")
-    public Result<Void> updateProfile(@RequestBody UpdateProfileDTO updateProfileDTO, HttpServletRequest request) {
-        profileService.updateProfile(updateProfileDTO, request);
+    public Result<Void> updateProfile(@RequestBody UpdateProfileDTO updateProfileDTO) {
+        profileService.updateProfile(updateProfileDTO);
         return Result.success();
     }
 
+    @AuthCheck
     @PutMapping("/avatar")
-    public Result<String> uploadAvatar(@RequestPart("file") MultipartFile file, HttpServletRequest request) {
-        String avatarUrl = profileService.uploadAvatar(file, request);
+    public Result<String> uploadAvatar(@RequestPart("file") MultipartFile file) {
+        String avatarUrl = profileService.uploadAvatar(file);
         return Result.success(avatarUrl);
     }
 

@@ -2,7 +2,6 @@ package com.joj.user.auth.service;
 
 import com.joj.user.auth.controller.dto.*;
 import com.joj.user.auth.controller.dto.LoginUserVO;
-import com.joj.user.auth.model.Entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +21,7 @@ public interface AuthService {
 
     Boolean logout(HttpServletRequest request);
 
-    Boolean resetPassword(PasswordResetRequest passwordResetRequest, HttpServletRequest request);
+    Boolean resetPassword(PasswordResetRequest passwordResetRequest);
 
-    User getLoginUser(HttpServletRequest request);
+//    User getLoginUser(HttpServletRequest request);
 }

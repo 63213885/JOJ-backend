@@ -6,6 +6,7 @@ import com.joj.user.auth.controller.dto.*;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.model.IdentifierType;
 import com.joj.user.auth.controller.dto.LoginUserVO;
+import com.joj.common.model.constant.UserConstant;
 import com.joj.user.auth.service.AuthService;
 import com.joj.user.auth.service.UserService;
 import com.joj.user.auth.verification.model.SendCodeResult;
@@ -260,21 +261,12 @@ public class AuthServiceImpl implements AuthService {
 
         user = userService.updateIP(user, request);
         // 3. 记录用户的登录态
-        request.getSession().setAttribute("user_login", user);
+        request.getSession().setAttribute(UserConstant.LOGIN_USER_ID, user.getId());
 
         return LoginUserVO.from(user);
     }
 
     public Boolean logout(HttpServletRequest request) {
-        if (request == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求对象不能为空");
-        }
-        if (request.getSession() == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "会话对象不能为空");
-        }
-        if (request.getSession().getAttribute("user_login") == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
         // 移除登录态
         // request.getSession().removeAttribute("user_login");
         request.getSession().invalidate();
@@ -282,7 +274,7 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
-    public Boolean resetPassword(PasswordResetRequest passwordResetRequest, HttpServletRequest request) {
+    public Boolean resetPassword(PasswordResetRequest passwordResetRequest) {
         String account = passwordResetRequest.getAccount();
         String newPassword = passwordResetRequest.getNewPassword();
         String confirmPassword = passwordResetRequest.getConfirmPassword();
@@ -328,16 +320,16 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
-    public User getLoginUser(HttpServletRequest request) {
-        if (request == null || request.getSession() == null || request.getSession().getAttribute("user_login") == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无用户信息");
-        }
-        Object userObj = request.getSession().getAttribute("user_login");
-        if (userObj == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
-        User user = (User) userObj;
-        return user;
-    }
+//    public User getLoginUser(HttpServletRequest request) {
+//        if (request == null || request.getSession() == null || request.getSession().getAttribute("user_login") == null) {
+//            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无用户信息");
+//        }
+//        Object userObj = request.getSession().getAttribute("user_login");
+//        if (userObj == null) {
+//            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
+//        }
+//        User user = (User) userObj;
+//        return user;
+//    }
 
 }

@@ -1,5 +1,7 @@
 package com.joj.user.auth.controller;
 
+import com.joj.common.annotation.AuthCheck;
+import com.joj.common.context.UserContext;
 import com.joj.common.result.Result;
 import com.joj.user.auth.controller.dto.*;
 import com.joj.user.auth.controller.dto.LoginUserVO;
@@ -50,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public Result<Long> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
+    public Result<Long> register(@Valid @RequestBody RegisterRequest registerRequest) {
         Long userId = authService.register(registerRequest);
         return Result.success(userId);
     }
@@ -61,6 +63,7 @@ public class AuthController {
         return Result.success(loginUserVO);
     }
 
+    @AuthCheck
     @PostMapping("/logout")
     public Result<Boolean> logout(HttpServletRequest request) {
         boolean ok = authService.logout(request);
@@ -68,14 +71,15 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public Result<LoginUserVO> getLoginUser(HttpServletRequest request) {
-        User loginUser = authService.getLoginUser(request);
+    public Result<LoginUserVO> getLoginUser() {
+        User loginUser = UserContext.get();
         return Result.success(LoginUserVO.from(loginUser));
     }
 
+    @AuthCheck
     @PostMapping("/password/reset")
-    public Result<Boolean> resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest, HttpServletRequest request) {
-        boolean ok = authService.resetPassword(passwordResetRequest, request);
+    public Result<Boolean> resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest) {
+        boolean ok = authService.resetPassword(passwordResetRequest);
         return Result.success(ok);
     }
 

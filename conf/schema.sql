@@ -84,70 +84,70 @@ create table if not exists user_follow (
     key idx_to (to_user_id, from_user_id, rel_status)
 ) engine=InnoDB default charset=utf8mb4 comment='用户关注关系表';
 
-# create table if not exists problems
-# (
-#     id                   bigint unsigned not null auto_increment comment '题目ID',
-#
-#     title                varchar(256)   not null comment '标题',
-#     content              mediumtext     not null comment '题面',
-#     input_desc           text           null comment '输入描述',
-#     output_desc          text           null comment '输出描述',
-#     sample_input         text           null comment '样例输入',
-#     sample_output        text           null comment '样例输出',
-#     hint                 text           null comment '提示',
-#
-#     difficulty           tinyint        not null default 1 comment '难度：1简单 2中等 3困难',
-#     time_limit_ms        int unsigned   not null default 1000 comment '时间限制ms',
-#     memory_limit_mb      int unsigned   not null default 128 comment '内存限制MB',
-#
-#     submit_count         int unsigned   not null default 0 comment '提交数',
-#     accepted_count       int unsigned   not null default 0 comment '通过数',
-#
-#     judge_config         json           null comment '判题配置',
-#     tags                 varchar(512)   null comment '标签，先简单逗号分隔',
-#
-#     creator_id           bigint unsigned null comment '创建人ID',
-#
-#     status               tinyint        not null default 0 comment '状态：0草稿 1公开 2隐藏',
-#     create_time          datetime       not null default current_timestamp,
-#     update_time          datetime       not null default current_timestamp on update current_timestamp,
-#     is_deleted           tinyint        not null default 0,
-#
-#     primary key (id),
-#     key idx_creator_id (creator_id),
-#     key idx_difficulty (difficulty),
-#     key idx_status (status)
-# ) engine=InnoDB default charset=utf8mb4 comment='题目表';
-#
-# create table if not exists submissions
-# (
-#     id                   bigint unsigned not null auto_increment comment '提交ID',
-#
-#     user_id              bigint unsigned not null comment '用户ID',
-#     problem_id           bigint unsigned not null comment '题目ID',
-#     contest_id           bigint unsigned null comment '比赛ID，非比赛提交为空',
-#     pk_match_id          bigint unsigned null comment 'PK对局ID，非PK提交为空',
-#
-#     language             varchar(32)    not null comment '编程语言',
-#     code                 longtext       not null comment '代码',
-#
-#     status               varchar(32)    not null comment '判题状态：waiting/running/accepted/wrong_answer等',
-#     result_message       varchar(255)   null comment '结果描述',
-#
-#     time_used_ms         int unsigned   null comment '耗时ms',
-#     memory_used_kb       int unsigned   null comment '内存KB',
-#     score                int            not null default 0 comment '得分',
-#
-#     submit_time          datetime       not null default current_timestamp comment '提交时间',
-#
-#     primary key (id),
-#     key idx_user_id (user_id),
-#     key idx_problem_id (problem_id),
-#     key idx_contest_id (contest_id),
-#     key idx_pk_match_id (pk_match_id),
-#     key idx_submit_time (submit_time)
-# ) engine=InnoDB default charset=utf8mb4 comment='提交记录表';
-#
+create table if not exists problem
+(
+    id             bigint unsigned not null auto_increment comment '题目ID',
+
+    title          varchar(256)    not null comment '标题',
+    content        mediumtext      not null comment '题面',
+
+    input_desc     text            null comment '输入描述',
+    output_desc    text            null comment '输出描述',
+
+    samples        json            null comment '样例',
+
+    time_limit     int unsigned    not null default 1000 comment '时间限制ms',
+    memory_limit   int unsigned    not null default 256 comment '内存限制MB',
+
+    submit_count   int unsigned    not null default 0 comment '提交数',
+    accepted_count int unsigned    not null default 0 comment '通过数',
+
+    tags           json            null comment '标签，先简单逗号分隔',
+    source         json            null comment '题目来源/出处',
+
+    creator_id     bigint unsigned null comment '创建人ID',
+
+    status         tinyint         not null default 0 comment '状态：0隐藏 1公开',
+    create_time    datetime        not null default current_timestamp,
+    update_time    datetime        not null default current_timestamp on update current_timestamp,
+    is_delete      tinyint         not null default 0,
+
+    primary key (id),
+    key idx_creator_id (creator_id),
+    key idx_status (status)
+) engine = InnoDB
+  default charset = utf8mb4 comment ='题目表';
+
+create table if not exists submission
+(
+    id             bigint unsigned not null comment '提交ID',
+
+    user_id        bigint unsigned not null comment '用户ID',
+    problem_id     bigint unsigned not null comment '题目ID',
+    contest_id     bigint unsigned null comment '比赛ID，非比赛提交为空',
+
+    language       varchar(32)     not null comment '编程语言',
+    code           longtext        not null comment '代码',
+
+    status         varchar(32)     not null comment '判题状态：waiting/running/accepted/wrong_answer等',
+    result_message varchar(255)    null comment '结果描述',
+
+    time_used      int unsigned    null comment '耗时ms',
+    memory_used    int unsigned    null comment '内存KB',
+    score          int             not null default 0 comment '得分',
+
+    submit_time    datetime        not null default current_timestamp comment '提交时间',
+
+    primary key (id),
+    key idx_user_id (user_id),
+    key idx_problem_id (problem_id),
+    key idx_contest_id (contest_id),
+    key idx_submit_time (submit_time)
+) engine = InnoDB
+  default charset = utf8mb4 comment ='提交记录表';
+
+
+
 # create table if not exists user_problem_status
 # (
 #     user_id              bigint unsigned not null comment '用户ID',

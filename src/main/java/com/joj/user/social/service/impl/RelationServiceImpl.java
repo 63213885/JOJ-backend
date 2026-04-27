@@ -1,5 +1,7 @@
 package com.joj.user.social.service.impl;
 
+import com.joj.common.exception.BusinessException;
+import com.joj.common.exception.ErrorCode;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.service.UserService;
 import com.joj.user.counter.service.UserStatsService;
@@ -37,6 +39,9 @@ public class RelationServiceImpl implements RelationService {
     @Transactional
     @Override
     public boolean follow(long fromUserId, long toUserId) {
+        if (isFollowing(fromUserId, toUserId)) {
+            throw new BusinessException(ErrorCode.API_REQUEST_ERROR, "已关注");
+        }
         long id = ThreadLocalRandom.current().nextLong(Long.MAX_VALUE);
         int inserted = relationMapper.insertFollowing(id, fromUserId, toUserId, 1);
         userStatsService.updateFollowingCount(fromUserId, 1);
@@ -47,6 +52,9 @@ public class RelationServiceImpl implements RelationService {
     @Transactional
     @Override
     public boolean unfollow(long fromUserId, long toUserId) {
+        if (!isFollowing(fromUserId, toUserId)) {
+            throw new BusinessException(ErrorCode.API_REQUEST_ERROR, "未关注");
+        }
         int deleted = relationMapper.cancelFollowing(fromUserId, toUserId);
         userStatsService.updateFollowingCount(fromUserId, -1);
         userStatsService.updateFollowerCount(toUserId, -1);

@@ -124,6 +124,12 @@
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
+        <!--        AOP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!--        阿里云平台-发短信-->
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -149,6 +155,12 @@
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>3.17.3</version>
+        </dependency>
+
+        <!--        apache commons lang3-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
 <!--        &lt;!&ndash; https://hutool.cn/docs/index.html#/&ndash;&gt;-->

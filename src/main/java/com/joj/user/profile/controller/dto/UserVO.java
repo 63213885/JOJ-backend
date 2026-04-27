@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 public class UserVO implements Serializable {
 
     // from User
+    private Long id;
+
     private String account;
 
     private String role;

@@ -1,5 +1,6 @@
 package com.joj.user.profile.service.impl;
 
+import com.joj.common.context.UserContext;
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
 import com.joj.user.auth.model.Entity.User;
@@ -18,7 +19,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author jzz
@@ -53,12 +53,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public UserDetailVO getPrivateProfile(HttpServletRequest request) {
-        Object userObj = request.getSession().getAttribute("user_login");
-        if (userObj == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
-        User user = (User) userObj;
+    public UserDetailVO getPrivateProfile() {
+        User user = UserContext.get();
         // todo 这里是从redis session中拿的用户信息，可能有数据不一致问题。
 
         UserDetailVO userDetailVO = UserDetailVO.from(user);
@@ -75,15 +71,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void updateProfile(UpdateProfileDTO updateProfileDTO, HttpServletRequest request) {
-        if (request == null || request.getSession() == null || request.getSession().getAttribute("user_login") == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无用户信息");
-        }
-        Object userObj = request.getSession().getAttribute("user_login");
-        if (userObj == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
-        User user = (User) userObj;
+    public void updateProfile(UpdateProfileDTO updateProfileDTO) {
+        User user = UserContext.get();
         if (user.getAccount().equals(updateProfileDTO.getAccount())) {
             user.setBio(updateProfileDTO.getBio());
             user.setSchool(updateProfileDTO.getSchool());
@@ -100,15 +89,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public String uploadAvatar(MultipartFile file, HttpServletRequest request) {
-        if (request == null || request.getSession() == null || request.getSession().getAttribute("user_login") == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无用户信息");
-        }
-        Object userObj = request.getSession().getAttribute("user_login");
-        if (userObj == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
-        User user = (User) userObj;
+    public String uploadAvatar(MultipartFile file) {
+        User user = UserContext.get();
         String url = ossStorageService.uploadAvatar(user.getId(), file);
         userService.updateAvatar(user.getId(), url);
         return url;

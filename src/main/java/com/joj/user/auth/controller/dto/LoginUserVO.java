@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class LoginUserVO implements Serializable {
 
+    private Long id;
+
     private String account;
 
     private String phone;

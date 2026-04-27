@@ -10,6 +10,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @createtime 2026/4/10 14:37
  */
 
+/**
+ * 请求链路
+ * -> Filter / Spring Security
+ * -> DispatcherServlet
+ * -> Spring MVC CORS
+ * -> Interceptor
+ * -> Controller
+ */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

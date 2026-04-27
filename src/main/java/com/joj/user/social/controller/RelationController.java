@@ -1,5 +1,7 @@
 package com.joj.user.social.controller;
 
+import com.joj.common.annotation.AuthCheck;
+import com.joj.common.context.UserContext;
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
 import com.joj.common.result.Result;
@@ -28,66 +30,59 @@ public class RelationController {
     @Resource
     private RelationService relationService;
 
-    private User getLoginUser(HttpServletRequest request) {
-        if (request == null || request.getSession() == null || request.getSession().getAttribute("user_login") == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无用户信息");
-        }
-        Object userObj = request.getSession().getAttribute("user_login");
-        if (userObj == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户未登录");
-        }
-        User user = (User) userObj;
-        return user;
-    }
-
+    @AuthCheck
     @PostMapping("/follow")
-    public Result<Boolean> follow(@RequestParam("toUserId") long toUserId, HttpServletRequest request) {
-        User user = getLoginUser(request);
+    public Result<Boolean> follow(@RequestParam("toUserId") long toUserId) {
+        User user = UserContext.get();
         boolean follow = relationService.follow(user.getId(), toUserId);
         return Result.success(follow);
     }
 
+    @AuthCheck
     @PostMapping("/unfollow")
-    public Result<Boolean> unfollow(@RequestParam("toUserId") long toUserId, HttpServletRequest request) {
-        User user = getLoginUser(request);
+    public Result<Boolean> unfollow(@RequestParam("toUserId") long toUserId) {
+        User user = UserContext.get();
         boolean unfollow = relationService.unfollow(user.getId(), toUserId);
         return Result.success(unfollow);
     }
 
+    @AuthCheck
     @GetMapping("/status")
-    public Result<Map<String, Boolean>> status(@RequestParam("toUserId") long toUserId, HttpServletRequest request) {
-        User user = getLoginUser(request);
+    public Result<Map<String, Boolean>> status(@RequestParam("toUserId") long toUserId) {
+        User user = UserContext.get();
         Map<String, Boolean> status = relationService.relationStatus(user.getId(), toUserId);
         return Result.success(status);
     }
 
+    @AuthCheck
     @GetMapping("/following")
-    public Result<List<UserVO>> following(@RequestParam(value = "limit", defaultValue = "20") int limit,
-                                          @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                          HttpServletRequest request) {
+    public Result<List<UserVO>> following(@RequestParam(value = "userId", required = false) Long userId,
+                                          @RequestParam(value = "limit", defaultValue = "20") int limit,
+                                          @RequestParam(value = "offset", defaultValue = "0") int offset) {
         if (limit < 1 || limit > 100) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "limit参数错误");
         }
         if (offset < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "offset参数错误");
         }
-        User user = getLoginUser(request);
-        List<UserVO> followingProfiles = relationService.followingProfiles(user.getId(), limit, offset);
+        long targetId = userId != null ? userId : UserContext.get().getId();
+        List<UserVO> followingProfiles = relationService.followingProfiles(targetId, limit, offset);
         return Result.success(followingProfiles);
     }
 
+    @AuthCheck
     @GetMapping("/followers")
-    public Result<List<UserVO>> followers(@RequestParam(value = "limit", defaultValue = "20") int limit,
-                                           @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                          HttpServletRequest request) {
+    public Result<List<UserVO>> followers(@RequestParam(value = "userId", required = false) Long userId,
+                                          @RequestParam(value = "limit", defaultValue = "20") int limit,
+                                           @RequestParam(value = "offset", defaultValue = "0") int offset) {
         if (limit < 1 || limit > 100) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "limit参数错误");
         }
         if (offset < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "offset参数错误");
         }
-        User user = getLoginUser(request);
-        List<UserVO> followersProfiles = relationService.followersProfiles(user.getId(), limit, offset);
+        long targetId = userId != null ? userId : UserContext.get().getId();
+        List<UserVO> followersProfiles = relationService.followersProfiles(targetId, limit, offset);
         return Result.success(followersProfiles);
     }
 

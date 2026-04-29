@@ -1,4 +1,4 @@
-package com.joj.problem.model;
+package com.joj.problem.problem.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

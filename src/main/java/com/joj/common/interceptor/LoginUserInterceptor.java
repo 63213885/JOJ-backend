@@ -51,7 +51,7 @@ public class LoginUserInterceptor implements HandlerInterceptor {
         if (userIdObj instanceof Long) {
             Long userId = (Long) userIdObj;
 
-            User loginUser = userService.findById(userId);
+            User loginUser = userService.getUserById(userId);
 
             if (loginUser != null) {
                 UserContext.set(loginUser);

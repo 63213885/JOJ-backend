@@ -2,7 +2,7 @@ package com.joj.user.auth.controller;
 
 import com.joj.common.annotation.AuthCheck;
 import com.joj.common.context.UserContext;
-import com.joj.common.result.Result;
+import com.joj.common.model.result.Result;
 import com.joj.user.auth.controller.dto.*;
 import com.joj.user.auth.controller.dto.LoginUserVO;
 import com.joj.user.auth.model.Entity.User;

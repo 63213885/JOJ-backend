@@ -1,27 +1,24 @@
-package com.joj.problem.controller.dto;
+package com.joj.problem.problem.controller.dto;
 
-import com.joj.problem.model.Problem;
+import com.joj.problem.problem.model.Problem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author jzz
  * @github <a href="https://github.com/63213885">63213885</a>
- * @createtime 2026/4/23 23:03
+ * @createtime 2026/4/26 13:43
  */
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemVO implements Serializable {
-
-    private Long id;
+public class UpdateProblemRequest {
 
     private String title;
     private String content;
@@ -34,14 +31,9 @@ public class ProblemVO implements Serializable {
     private Integer timeLimit;
     private Integer memoryLimit;
 
-    private Integer submitCount;
-    private Integer acceptedCount;
-
     private List<String> tags;
 
     private List<String> source;
-
-    private Long creatorId;
 
     private Integer status;
 

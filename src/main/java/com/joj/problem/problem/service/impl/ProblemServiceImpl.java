@@ -1,14 +1,14 @@
-package com.joj.problem.service.impl;
+package com.joj.problem.problem.service.impl;
 
 import com.joj.common.model.enums.ProblemStatusEnum;
 import com.joj.common.context.UserContext;
 import com.joj.common.model.enums.UserRoleEnum;
-import com.joj.problem.controller.dto.CreateProblemRequest;
-import com.joj.problem.controller.dto.ProblemVO;
-import com.joj.problem.controller.dto.UpdateProblemRequest;
-import com.joj.problem.mapper.ProblemMapper;
-import com.joj.problem.model.Problem;
-import com.joj.problem.service.ProblemService;
+import com.joj.problem.problem.controller.dto.CreateProblemRequest;
+import com.joj.problem.problem.controller.dto.ProblemVO;
+import com.joj.problem.problem.controller.dto.UpdateProblemRequest;
+import com.joj.problem.problem.mapper.ProblemMapper;
+import com.joj.problem.problem.model.Problem;
+import com.joj.problem.problem.service.ProblemService;
 import com.joj.user.auth.model.Entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -63,9 +63,15 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Transactional
-    @Override
-    public ProblemVO getProblemById(Long id) {
+    public Problem getProblemById(Long id) {
         Problem problem = problemMapper.findById(id);
+        return problem;
+    }
+
+    @Transactional
+    @Override
+    public ProblemVO getProblemVOById(Long id) {
+        Problem problem = getProblemById(id);
 
         if (ProblemStatusEnum.fromValue(problem.getStatus()) == ProblemStatusEnum.HIDE
                 && (UserContext.get() == null || UserRoleEnum.fromValue(UserContext.get().getRole()) != UserRoleEnum.ADMIN)) {

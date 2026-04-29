@@ -1,7 +1,7 @@
 package com.joj.user.profile.controller;
 
 import com.joj.common.annotation.AuthCheck;
-import com.joj.common.result.Result;
+import com.joj.common.model.result.Result;
 import com.joj.user.profile.controller.dto.UpdateProfileDTO;
 import com.joj.user.profile.controller.dto.UserDetailVO;
 import com.joj.user.profile.controller.dto.UserVO;

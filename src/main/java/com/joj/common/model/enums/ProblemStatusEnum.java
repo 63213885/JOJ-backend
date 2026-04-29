@@ -13,8 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ProblemStatusEnum {
 
-    HIDE(0),
-    SHOW(1);
+    HIDE("隐藏", 0),
+    SHOW("显示", 1);
+
+    private final String text;
 
     private final Integer value;
 

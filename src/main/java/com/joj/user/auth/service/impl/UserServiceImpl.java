@@ -4,7 +4,11 @@ import com.joj.user.auth.mapper.UserMapper;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.auth.service.UserService;
 import com.joj.user.auth.util.IpUtil;
+import com.joj.user.counter.model.UserStats;
+import com.joj.user.counter.service.UserStatsService;
+import com.joj.user.profile.controller.dto.UserVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,8 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private UserStatsService userStatsService;
 
 //    增
     /**
@@ -47,7 +53,7 @@ public class UserServiceImpl implements UserService {
      * @param id
      */
     @Transactional
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
         userMapper.deleteById(id, LocalDateTime.now());
     }
 
@@ -94,8 +100,17 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Transactional(readOnly = true)
-    public User findById(long id) {
-        return userMapper.findById(id);
+    public User getUserById(Long id) {
+        return userMapper.getUserById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public UserVO getUserVOById(Long id) {
+        User user = getUserById(id);
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        BeanUtils.copyProperties(userStatsService.findByUserId(id), userVO);
+        return userVO;
     }
 
     /**

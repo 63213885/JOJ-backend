@@ -1,4 +1,4 @@
-package com.joj.common.result;
+package com.joj.common.model.result;
 
 import com.joj.common.exception.ErrorCode;
 import lombok.Data;

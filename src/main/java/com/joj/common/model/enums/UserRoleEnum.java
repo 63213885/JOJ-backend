@@ -13,8 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserRoleEnum {
 
-    USER("user"),
-    ADMIN("admin");
+    USER("普通用户", "user"),
+    ADMIN("管理员", "admin");
+
+    private final String text;
 
     private final String value;
 

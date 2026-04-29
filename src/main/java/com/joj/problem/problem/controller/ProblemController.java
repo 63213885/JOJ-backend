@@ -1,12 +1,12 @@
-package com.joj.problem.controller;
+package com.joj.problem.problem.controller;
 
 import com.joj.common.annotation.AuthCheck;
 import com.joj.common.model.enums.UserRoleEnum;
-import com.joj.common.result.Result;
-import com.joj.problem.controller.dto.CreateProblemRequest;
-import com.joj.problem.controller.dto.ProblemVO;
-import com.joj.problem.controller.dto.UpdateProblemRequest;
-import com.joj.problem.service.ProblemService;
+import com.joj.common.model.result.Result;
+import com.joj.problem.problem.controller.dto.CreateProblemRequest;
+import com.joj.problem.problem.controller.dto.ProblemVO;
+import com.joj.problem.problem.controller.dto.UpdateProblemRequest;
+import com.joj.problem.problem.service.ProblemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +50,7 @@ public class ProblemController {
 
     @GetMapping("/{id}")
     public Result<ProblemVO> getProblemById(@PathVariable Long id) {
-        ProblemVO problem = problemService.getProblemById(id);
+        ProblemVO problem = problemService.getProblemVOById(id);
         return Result.success(problem);
     }
 

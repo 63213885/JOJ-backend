@@ -4,7 +4,7 @@ import com.joj.common.annotation.AuthCheck;
 import com.joj.common.context.UserContext;
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
-import com.joj.common.result.Result;
+import com.joj.common.model.result.Result;
 import com.joj.user.auth.model.Entity.User;
 import com.joj.user.profile.controller.dto.UserVO;
 import com.joj.user.social.service.RelationService;
@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 

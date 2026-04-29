@@ -1,7 +1,6 @@
-package com.joj.problem.config;
+package com.joj.common.handler.mybatis;
 
-import com.joj.common.config.AbstractJsonTypeHandler;
-import com.joj.problem.model.Problem;
+import com.joj.problem.problem.model.Problem;
 
 import java.util.List;
 

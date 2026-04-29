@@ -1,6 +1,6 @@
-package com.joj.problem.mapper;
+package com.joj.problem.problem.mapper;
 
-import com.joj.problem.model.Problem;
+import com.joj.problem.problem.model.Problem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

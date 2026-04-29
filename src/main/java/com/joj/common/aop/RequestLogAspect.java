@@ -41,7 +41,7 @@ public class RequestLogAspect {
             "execution(* com.joj.user.auth.controller..*.*(..))"
                     + " || execution(* com.joj.user.profile.controller..*.*(..))"
                     + " || execution(* com.joj.user.social.controller..*.*(..))"
-                    + " || execution(* com.joj.problem.controller..*.*(..))"
+                    + " || execution(* com.joj.problem.problem.controller..*.*(..))"
     )
     public void controllerPointcut() {
     }

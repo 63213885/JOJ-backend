@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.joj.problem.mapper.ProblemMapper">
+<mapper namespace="com.joj.problem.problem.mapper.ProblemMapper">
 
-    <resultMap id="ProblemResultMap" type="com.joj.problem.model.Problem">
+    <resultMap id="ProblemResultMap" type="com.joj.problem.problem.model.Problem">
         <id property="id" column="id"/>
 
         <result property="title" column="title"/>
@@ -11,7 +11,7 @@
         <result property="inputDesc" column="input_desc"/>
         <result property="outputDesc" column="output_desc"/>
 
-        <result property="samples" column="samples" typeHandler="com.joj.problem.config.SampleListTypeHandler"/>
+        <result property="samples" column="samples" typeHandler="com.joj.common.handler.mybatis.SampleListTypeHandler"/>
 
         <result property="timeLimit" column="time_limit"/>
         <result property="memoryLimit" column="memory_limit"/>
@@ -19,9 +19,9 @@
         <result property="submitCount" column="submit_count"/>
         <result property="acceptedCount" column="accepted_count"/>
 
-        <result property="tags" column="tags" typeHandler="com.joj.problem.config.StringListTypeHandler"/>
+        <result property="tags" column="tags" typeHandler="com.joj.common.handler.mybatis.StringListTypeHandler"/>
 
-        <result property="source" column="source" typeHandler="com.joj.problem.config.StringListTypeHandler"/>
+        <result property="source" column="source" typeHandler="com.joj.common.handler.mybatis.StringListTypeHandler"/>
 
         <result property="creatorId" column="creator_id"/>
         <result property="status" column="status"/>
@@ -54,7 +54,7 @@
     </sql>
 
     <!--    增-->
-    <insert id="insert" parameterType="com.joj.problem.model.Problem" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.joj.problem.problem.model.Problem" useGeneratedKeys="true" keyProperty="id">
         insert into problem (title,
                              content,
                              input_desc,
@@ -75,13 +75,13 @@
                 #{content},
                 #{inputDesc},
                 #{outputDesc},
-                #{samples, typeHandler=com.joj.problem.config.SampleListTypeHandler},
+                #{samples, typeHandler=com.joj.common.handler.mybatis.SampleListTypeHandler},
                 #{timeLimit},
                 #{memoryLimit},
                 #{submitCount},
                 #{acceptedCount},
-                #{tags, typeHandler=com.joj.problem.config.StringListTypeHandler},
-                #{source, typeHandler=com.joj.problem.config.StringListTypeHandler},
+                #{tags, typeHandler=com.joj.common.handler.mybatis.StringListTypeHandler},
+                #{source, typeHandler=com.joj.common.handler.mybatis.StringListTypeHandler},
                 #{creatorId},
                 #{status},
                 now(),
@@ -99,21 +99,20 @@
     </update>
 
     <!--    改-->
-    <update id="updateById" parameterType="com.joj.problem.model.Problem">
+    <update id="updateById" parameterType="com.joj.problem.problem.model.Problem">
         update problem
         <set>
             <if test="title != null">title = #{title},</if>
             <if test="content != null">content = #{content},</if>
             <if test="inputDesc != null">input_desc = #{inputDesc},</if>
             <if test="outputDesc != null">output_desc = #{outputDesc},</if>
-            <if test="samples != null">samples = #{samples, typeHandler=com.joj.problem.config.SampleListTypeHandler},
-            </if>
+            <if test="samples != null">samples = #{samples, typeHandler=com.joj.common.handler.mybatis.SampleListTypeHandler},</if>
             <if test="timeLimit != null">time_limit = #{timeLimit},</if>
             <if test="memoryLimit != null">memory_limit = #{memoryLimit},</if>
             <if test="submitCount != null">submit_count = #{submitCount},</if>
             <if test="acceptedCount != null">accepted_count = #{acceptedCount},</if>
-            <if test="tags != null">tags = #{tags, typeHandler=com.joj.problem.config.StringListTypeHandler},</if>
-            <if test="source != null">source = #{source, typeHandler=com.joj.problem.config.StringListTypeHandler},</if>
+            <if test="tags != null">tags = #{tags, typeHandler=com.joj.common.handler.mybatis.StringListTypeHandler},</if>
+            <if test="source != null">source = #{source, typeHandler=com.joj.common.handler.mybatis.StringListTypeHandler},</if>
             <if test="creatorId != null">creator_id = #{creatorId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="isDelete != null">is_delete = #{isDelete},</if>
@@ -154,7 +153,7 @@
         <if test="isAdmin == null or isAdmin == false">
             and status = 1
         </if>
-        order by id desc limit #{offset}, #{limit}
+        order by id asc limit #{offset}, #{limit}
     </select>
 
 </mapper>

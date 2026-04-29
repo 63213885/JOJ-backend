@@ -89,7 +89,7 @@
     </update>
 
 <!--    查-->
-    <select id="findById" parameterType="long" resultMap="UserResultMap">
+    <select id="getUserById" parameterType="long" resultMap="UserResultMap">
         SELECT *
         FROM user
         WHERE id = #{id}

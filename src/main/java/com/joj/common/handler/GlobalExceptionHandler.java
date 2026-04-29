@@ -2,7 +2,7 @@ package com.joj.common.handler;
 
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
-import com.joj.common.result.Result;
+import com.joj.common.model.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

@@ -1,4 +1,4 @@
-package com.joj.common.config;
+package com.joj.common.handler.mybatis;
 
 /**
  * @author jzz

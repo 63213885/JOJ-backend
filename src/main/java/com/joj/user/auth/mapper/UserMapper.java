@@ -26,7 +26,7 @@ public interface UserMapper {
     void updateById(User user);
 
     // 查
-    User findById(@Param("id") Long id);
+    User getUserById(@Param("id") Long id);
 
     User findByAccount(@Param("account") String account);
 

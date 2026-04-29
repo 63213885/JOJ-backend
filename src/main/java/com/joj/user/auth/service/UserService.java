@@ -7,6 +7,7 @@ package com.joj.user.auth.service;
  */
 
 import com.joj.user.auth.model.Entity.User;
+import com.joj.user.profile.controller.dto.UserVO;
 import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ public interface UserService {
     User createUser(User user);
 
     // 删
-    void deleteById(long id);
+    void deleteById(Long id);
 
     // 改
     void updateUser(User user);
@@ -31,7 +32,9 @@ public interface UserService {
     void updateAvatar(Long userId, String url);
 
     // 查
-    User findById(long id);
+    User getUserById(Long id);
+
+    UserVO getUserVOById(Long id);
 
     User findByAccount(String account);
 

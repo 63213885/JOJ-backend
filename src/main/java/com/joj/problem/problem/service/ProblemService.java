@@ -1,8 +1,8 @@
-package com.joj.problem.service;
+package com.joj.problem.problem.service;
 
-import com.joj.problem.controller.dto.CreateProblemRequest;
-import com.joj.problem.controller.dto.ProblemVO;
-import com.joj.problem.controller.dto.UpdateProblemRequest;
+import com.joj.problem.problem.controller.dto.CreateProblemRequest;
+import com.joj.problem.problem.controller.dto.ProblemVO;
+import com.joj.problem.problem.controller.dto.UpdateProblemRequest;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public interface ProblemService {
 
     void updateProblem(Long id, UpdateProblemRequest updateProblemRequest);
 
-    ProblemVO getProblemById(Long id);
+    ProblemVO getProblemVOById(Long id);
 
     List<ProblemVO> getProblemList(Integer limit, Integer offset);
 

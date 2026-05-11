@@ -3,6 +3,7 @@ package com.joj.problem.problem.service;
 import com.joj.problem.problem.controller.dto.CreateProblemRequest;
 import com.joj.problem.problem.controller.dto.ProblemVO;
 import com.joj.problem.problem.controller.dto.UpdateProblemRequest;
+import com.joj.problem.problem.model.Problem;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface ProblemService {
     void deleteProblem(Long id);
 
     void updateProblem(Long id, UpdateProblemRequest updateProblemRequest);
+
+    Problem getProblemById(Long id);
 
     ProblemVO getProblemVOById(Long id);
 

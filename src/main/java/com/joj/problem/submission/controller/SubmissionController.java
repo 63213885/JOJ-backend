@@ -9,8 +9,10 @@ import com.joj.common.model.result.Result;
 import com.joj.problem.submission.controller.dto.SubmissionQueryRequest;
 import com.joj.problem.submission.controller.dto.SubmissionVO;
 import com.joj.problem.submission.controller.dto.SubmitCodeRequest;
+import com.joj.problem.submission.model.Submission;
 import com.joj.problem.submission.service.SubmissionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -48,7 +50,10 @@ public class SubmissionController {
 //    @AuthCheck(mustRole = UserRoleEnum.ADMIN)
 //    @PutMapping("/{id}")
 //    public Result<Boolean> updateSubmission(@PathVariable Long id, @RequestBody SubmissionUpdateRequest request) {
-//        Boolean result = submissionService.updateSubmission(id, request);
+//        Submission submission = new Submission();
+//        submission.setId(id);
+//        BeanUtils.copyProperties(request, submission);
+//        Boolean result = submissionService.updateSubmission(submission);
 //        return Result.success(result);
 //    }
 

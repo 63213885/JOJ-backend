@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum SubmissionLanguageEnum {
 
-    CPP("Cpp"),
+    CPP11("C++11"),
+    CPP20("C++20"),
     JAVA("Java"),
     PYTHON3("Python3"),
-    GO("Go");
+    PYPY3("Pypy3"),
+    GOLANG("Golang");
 
     private final String value;
 

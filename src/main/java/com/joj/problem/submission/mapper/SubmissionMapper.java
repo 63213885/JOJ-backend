@@ -20,7 +20,7 @@ public interface SubmissionMapper {
 
     int deleteSubmissionById(@Param("id") Long id);
 
-//    int updateSubmissionById(Submission submission);
+    int updateSubmissionById(Submission submission);
 
     Submission getSubmissionById(@Param("id") Long id);
 

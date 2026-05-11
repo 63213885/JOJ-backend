@@ -39,7 +39,7 @@
         is_delete
     </sql>
 
-    <insert id="insertSubmission" parameterType="com.joj.problem.submission.model.Submission">
+    <insert id="insertSubmission" parameterType="com.joj.problem.submission.model.Submission" useGeneratedKeys="true" keyProperty="id">
         insert into submission
         (id,
          user_id,
@@ -73,6 +73,24 @@
     <update id="deleteSubmissionById">
         update submission
         set is_delete = 1, update_time = now(3)
+        where id = #{id} and is_delete = 0
+    </update>
+
+    <update id="updateSubmissionById" parameterType="com.joj.problem.submission.model.Submission">
+        update submission
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="problemId != null">problem_id = #{problemId},</if>
+            <if test="contestId != null">contest_id = #{contestId},</if>
+            <if test="language != null">language = #{language},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="timeUsed != null">time_used = #{timeUsed},</if>
+            <if test="memoryUsed != null">memory_used = #{memoryUsed},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="submitTime != null">submit_time = #{submitTime},</if>
+            update_time = now(3)
+        </set>
         where id = #{id} and is_delete = 0
     </update>
 

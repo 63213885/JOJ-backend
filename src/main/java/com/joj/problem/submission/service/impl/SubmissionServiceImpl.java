@@ -3,8 +3,10 @@ package com.joj.problem.submission.service.impl;
 import com.joj.common.exception.BusinessException;
 import com.joj.common.exception.ErrorCode;
 import com.joj.common.model.enums.SubmissionStatusEnum;
+import com.joj.judge.service.JudgeService;
 import com.joj.problem.problem.service.ProblemService;
 import com.joj.problem.submission.controller.dto.SubmissionQueryRequest;
+import com.joj.problem.submission.controller.dto.SubmissionUpdateRequest;
 import com.joj.problem.submission.controller.dto.SubmissionVO;
 import com.joj.problem.submission.controller.dto.SubmitCodeRequest;
 import com.joj.problem.submission.mapper.SubmissionMapper;
@@ -18,6 +20,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -40,6 +44,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private UserService userService;
     @Resource
     private ProblemService problemService;
+    @Autowired
+    private JudgeService judgeService;
 
     @Transactional
     @Override
@@ -52,7 +58,16 @@ public class SubmissionServiceImpl implements SubmissionService {
         submission.setMemoryUsed(0);
         submission.setScore(0);
         submissionMapper.insertSubmission(submission);
-        return 0L;
+        log.info("submission id = {}", submission.getId());
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                judgeService.doJudge(submission.getId());
+            }
+        });
+
+        return submission.getId();
     }
 
     @Transactional
@@ -60,6 +75,13 @@ public class SubmissionServiceImpl implements SubmissionService {
     public Boolean deleteSubmission(Long id) {
         int delete = submissionMapper.deleteSubmissionById(id);
         return delete > 0;
+    }
+
+    @Transactional
+    @Override
+    public Submission getSubmission(Long id) {
+        Submission submission = submissionMapper.getSubmissionById(id);
+        return submission;
     }
 
     @Transactional
@@ -75,17 +97,19 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Transactional
     @Override
     public SubmissionVO getSubmissionVO(Long id) {
-        Submission submission = submissionMapper.getSubmissionById(id);
+        Submission submission = getSubmission(id);
         if (submission == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "提交记录不存在");
         }
         return toSubmissionVO(submission);
     }
 
-//    @Override
-//    public Boolean updateSubmission(Long id, SubmissionUpdateRequest request) {
-//        return null;
-//    }
+    @Transactional
+    @Override
+    public Boolean updateSubmission(Submission submission) {
+        int update = submissionMapper.updateSubmissionById(submission);
+        return update > 0;
+    }
 
     @Transactional
     @Override
@@ -96,4 +120,5 @@ public class SubmissionServiceImpl implements SubmissionService {
             return toSubmissionVO(submission);
         }).collect(Collectors.toList());
     }
+
 }

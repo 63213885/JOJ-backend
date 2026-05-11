@@ -38,3 +38,15 @@ services:
     volumes:
       - ./.redis-data:/data # 持久化
     restart: always
+
+#  # -------------------------------
+#  # go-judge
+#  # -------------------------------
+#  go-judge:
+#    image: criyle/go-judge:v1.12.0
+#    container_name: joj-codeSandbox
+#    privileged: true
+#    shm_size: "256m"
+#    ports:
+#      - "5050:5050"
+#    restart: always

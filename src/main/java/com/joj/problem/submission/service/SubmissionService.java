@@ -19,7 +19,9 @@ public interface SubmissionService {
 
     Boolean deleteSubmission(Long id);
 
-//    Boolean updateSubmission(Long id, SubmissionUpdateRequest request);
+    Boolean updateSubmission(Submission submission);
+
+    Submission getSubmission(Long id);
 
     SubmissionVO toSubmissionVO(Submission submission);
 

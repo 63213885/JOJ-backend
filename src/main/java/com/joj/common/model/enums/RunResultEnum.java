@@ -10,29 +10,20 @@ import java.util.stream.Collectors;
 /**
  * @author jzz
  * @github <a href="https://github.com/63213885">63213885</a>
- * @createtime 2026/4/27 21:31
+ * @createtime 2026/5/5 16:11
  */
 
 @Getter
 @AllArgsConstructor
-public enum SubmissionStatusEnum {
+public enum RunResultEnum {
 
-    PENDING("待办", "Pending"),
-    COMPILING("编译中", "Compiling"),
-    RUNNING("运行中", "Running"),
-
-    ACCEPTED("答案正确", "Accepted"),
-    WRONG_ANSWER("答案错误", "Wrong Answer"),
-    COMPILE_ERROR("编译错误", "Compile Error"),
-    PRESENTATION_ERROR("格式错误", "Presentation Error"),
+    RUN_SUCCESS("运行成功", "Run Success"),
     RUNTIME_ERROR("运行时错误", "Runtime Error"),
+    SYSTEM_ERROR("系统错误", "System Error"),
 
     MEMORY_LIMIT_EXCEEDED("超出内存限制", "Memory Limit Exceeded"),
     TIME_LIMIT_EXCEEDED("超出时间限制", "Time Limit Exceeded"),
-
-    OUTPUT_LIMIT_EXCEEDED("输出超限", "Output Limit Exceeded"),
-
-    SYSTEM_ERROR("系统错误", "System Error");
+    OUTPUT_LIMIT_EXCEEDED("输出超限", "Output Limit Exceeded");
 
     private final String text;
 
@@ -42,11 +33,11 @@ public enum SubmissionStatusEnum {
         return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
     }
 
-    public static SubmissionStatusEnum fromValue(String value) {
+    public static RunResultEnum fromValue(String value) {
         if (value == null) {
             return null;
         }
-        for (SubmissionStatusEnum role : values()) {
+        for (RunResultEnum role : values()) {
             if (role.value.equals(value)) {
                 return role;
             }

@@ -1,0 +1,54 @@
+package com.joj.common.core.model.vo;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.joj.common.core.model.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+/**
+ * @author jzz
+ * @github <a href="https://github.com/63213885">63213885</a>
+ * @createtime 2026/4/12 23:21
+ */
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class LoginUserVO implements Serializable {
+
+    private Long id;
+
+    private String account;
+
+    private String phone;
+
+    private String email;
+
+    private String role;
+
+    private String avatarUrl;
+
+    private String bio;
+
+    private String school;
+
+    private LocalDateTime lastLoginTime;
+
+    private String lastLoginIp;
+
+    public static LoginUserVO from(User user) {
+        if (user == null) {
+            return null;
+        }
+        LoginUserVO loginUserVO = new LoginUserVO();
+        BeanUtil.copyProperties(user, loginUserVO);
+        return loginUserVO;
+    }
+
+}

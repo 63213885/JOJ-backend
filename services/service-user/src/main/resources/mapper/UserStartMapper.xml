@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.joj.user.profile.mapper.UserStatsMapper">
+
+    <resultMap id="UserStatsResultMap" type="com.joj.common.core.model.entity.UserStats">
+        <id property="userId" column="user_id"/>
+
+        <result property="submitCount" column="submit_count"/>
+        <result property="acceptedCount" column="accepted_count"/>
+        <result property="solvedCount" column="solved_count"/>
+
+        <result property="followerCount" column="follower_count"/>
+        <result property="followingCount" column="following_count"/>
+
+        <result property="rating" column="rating"/>
+        <result property="courseCount" column="course_count"/>
+
+        <result property="pkCount" column="pk_count"/>
+        <result property="pkWinCount" column="pk_win_count"/>
+
+        <result property="contestCount" column="contest_count"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+
+    </resultMap>
+
+    <!-- 插入 -->
+    <insert id="insert">
+        insert into user_stats (user_id,
+                                submit_count,
+                                accepted_count,
+                                solved_count,
+                                follower_count,
+                                following_count,
+                                rating,
+                                course_count,
+                                pk_count,
+                                pk_win_count,
+                                contest_count,
+                                create_time,
+                                update_time)
+        values (#{userId},
+                #{submitCount},
+                #{acceptedCount},
+                #{solvedCount},
+                #{followerCount},
+                #{followingCount},
+                #{rating},
+                #{courseCount},
+                #{pkCount},
+                #{pkWinCount},
+                #{contestCount},
+                #{createTime},
+                #{updateTime})
+    </insert>
+
+<!--    改-->
+    <update id="updateById">
+        update user_stats
+        <set>
+            <if test="submitCount != null">submit_count = #{submitCount},</if>
+            <if test="acceptedCount != null">accepted_count = #{acceptedCount},</if>
+            <if test="solvedCount != null">solved_count = #{solvedCount},</if>
+            <if test="followerCount != null">follower_count = #{followerCount},</if>
+            <if test="followingCount != null">following_count = #{followingCount},</if>
+            <if test="rating != null">rating = #{rating},</if>
+            <if test="courseCount != null">course_count = #{courseCount},</if>
+            <if test="pkCount != null">pk_count = #{pkCount},</if>
+            <if test="pkWinCount != null">pk_win_count = #{pkWinCount},</if>
+            <if test="contestCount != null">contest_count = #{contestCount},</if>
+
+            update_time = #{updateTime}
+        </set>
+        where user_id = #{userId}
+    </update>
+
+
+    <update id="incrementSubmitCount">
+        UPDATE user_stats
+        SET submit_count = submit_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementAcceptedCount">
+        UPDATE user_stats
+        SET accepted_count = accepted_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementSolvedCount">
+        UPDATE user_stats
+        SET solved_count = solved_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <update id="updateFollowerCount">
+        UPDATE user_stats
+        SET follower_count = GREATEST(0, follower_count + #{delta})
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateFollowingCount">
+        UPDATE user_stats
+        SET following_count = GREATEST(0, following_count + #{delta})
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <update id="updateRating">
+        UPDATE user_stats
+        SET rating = GREATEST(0, rating + #{delta})
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementContestCount">
+        UPDATE user_stats
+        SET contest_count = contest_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <update id="incrementCourseCount">
+        UPDATE user_stats
+        SET course_count = course_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementPkCount">
+        UPDATE user_stats
+        SET pk_count = pk_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementPkWinCount">
+        UPDATE user_stats
+        SET pk_win_count = pk_win_count + 1
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 查询 -->
+    <select id="findById" resultMap="UserStatsResultMap">
+        select *
+        from user_stats
+        where user_id = #{userId}
+    </select>
+
+</mapper>

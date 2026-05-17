@@ -70,4 +70,5 @@ coverage/
 # pnpm-lock.yaml
 
 
-src/main/resources/application.yml
+application-dev.yml
+application-prod.yml

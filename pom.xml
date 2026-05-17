@@ -12,8 +12,16 @@
         <relativePath/>
     </parent>
 
-    <groupId>com</groupId>
-    <artifactId>JOJ</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>gateway</module>
+        <module>services</module>
+        <module>common</module>
+    </modules>
+
+    <groupId>com.joj</groupId>
+    <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>backend</name>
     <description>backend</description>
@@ -24,35 +32,34 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-cloud.version>2021.0.5</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud BOM -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Cloud Alibaba BOM -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- Spring Web：提供 MVC、REST Controller、RestTemplate 等 Web 能力 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- 测试：Spring Boot 测试套件（JUnit、Mock、Test utilities） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Mockito JUnit Jupiter：Mockito 与 JUnit5 集成 -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
 
         <!-- Lombok：减少样板代码（Getter/Setter/Builder 等），编译期生效 -->
         <dependency>
@@ -62,117 +69,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 参数校验：Bean Validation（Jakarta Validation / Hibernate Validator） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-
-        <!--        &lt;!&ndash; Actuator：健康检查与运行指标（/actuator/*） &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-starter-actuator</artifactId>-->
-<!--        </dependency>-->
-
-        <!-- MySQL 驱动：连接 MySQL 数据库 -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- JDBC：数据源与 JDBC 访问基础（配合 MyBatis 使用） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-
-        <!-- MyBatis Spring Boot Starter：MyBatis 集成与 Mapper 扫描 -->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-
-        <!-- Redis：Spring Data Redis（缓存、验证码、计数等存储） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <!-- Redisson：分布式锁、限流等高级 Redis 能力封装 -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
-            <version>3.52.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-redis</artifactId>
-        </dependency>
-
-        <!-- 接口文档 && openapi -->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-            <version>4.4.0</version>
-        </dependency>
-
-        <!--        BCrypt 密码加密-->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
-
-        <!--        AOP-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <!--        阿里云平台-发短信-->
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>alibabacloud-dypnsapi20170525</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-
-        <!-- Mail：邮件发送能力（验证码/通知等） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-<!--        解析IP地址的库，提供IP地址到地理位置的映射功能，常用于日志分析、访问控制等场景。-->
-        <dependency>
-            <groupId>org.lionsoul</groupId>
-            <artifactId>ip2region</artifactId>
-            <version>3.3.7</version>
-        </dependency>
-
-        <!-- 阿里云 OSS SDK：对象存储直传/签名/上传下载 -->
-        <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.17.3</version>
-        </dependency>
-
-        <!--        apache commons lang3-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <!-- https://hutool.cn/docs/index.html#/-->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.8</version>
-        </dependency>
-
-
     </dependencies>
 
     <build>
@@ -180,9 +76,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.joj.BackendApplication</mainClass>
-                </configuration>
             </plugin>
         </plugins>
     </build>

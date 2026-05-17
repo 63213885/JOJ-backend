@@ -1,0 +1,28 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: ${joj.spring.cloud.nacos.server-addr}
+    gateway:
+      routes:
+        - id: user-route
+          uri: lb://service-user
+          predicates:
+            - Path=/api/user/**, /api/auth/**, /api/profile/**, Path=/api/relation/**
+        - id: question-route
+          uri: lb://service-problem
+          predicates:
+            - Path=/api/problem/**, /api/submission/**
+
+logging:
+  level:
+    root: INFO
+    '[com.joj]': DEBUG

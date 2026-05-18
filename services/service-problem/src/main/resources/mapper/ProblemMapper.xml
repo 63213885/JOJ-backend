@@ -156,4 +156,13 @@
         order by id asc limit #{offset}, #{limit}
     </select>
 
+    <select id="total" resultType="java.lang.Integer">
+        select count(*)
+        from problem
+        where is_delete = 0
+        <if test="isAdmin == null or isAdmin == false">
+            and status = 1
+        </if>
+    </select>
+
 </mapper>

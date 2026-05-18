@@ -33,4 +33,5 @@ public interface ProblemMapper {
 
     List<Problem> selectProblemPageByStatus(@Param("limit") Integer limit, @Param("offset") Integer offset, @Param("isAdmin") Boolean isAdmin);
 
+    Integer total(@Param("isAdmin") Boolean isAdmin);
 }

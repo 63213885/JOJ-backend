@@ -1,5 +1,7 @@
 package com.joj.problem.problem.controller;
 
+import com.joj.common.core.model.dto.PageRequest;
+import com.joj.common.core.model.dto.PageResponse;
 import com.joj.common.core.model.enums.UserRoleEnum;
 import com.joj.common.core.model.result.Result;
 import com.joj.common.web.annotation.AuthCheck;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -55,10 +58,21 @@ public class ProblemController {
     }
 
     @GetMapping("/list")
-    public Result<List<ProblemVO>> getProblemList(@RequestParam(value = "limit", defaultValue = "50") Integer limit,
-                                                  @RequestParam(value = "offset", defaultValue = "0") Integer offset) {
+    public Result<PageResponse<ProblemVO>> getProblemList(@Valid PageRequest pageRequest) {
+        int current = pageRequest.getCurrent();
+        int pageSize = pageRequest.getPageSize();
+        String sortField = pageRequest.getSortField();
+        String sortOrder = pageRequest.getSortOrder();
+
+        int offset = (current - 1) * pageSize;
+        int limit = pageRequest.getPageSize();
         List<ProblemVO> problems = problemService.getProblemList(limit, offset);
-        return Result.success(problems);
+        return Result.success(
+                PageResponse.<ProblemVO>builder()
+                        .records(problems)
+                        .total(problemService.total())
+                        .build()
+        );
     }
 
 }

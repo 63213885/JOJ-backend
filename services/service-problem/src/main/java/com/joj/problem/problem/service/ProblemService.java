@@ -27,4 +27,6 @@ public interface ProblemService {
 
     List<ProblemVO> getProblemList(Integer limit, Integer offset);
 
+    Integer total();
+
 }

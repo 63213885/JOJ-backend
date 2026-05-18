@@ -94,4 +94,13 @@ public class ProblemServiceImpl implements ProblemService {
             return problemVO;
         }).collect(Collectors.toList());
     }
+
+    @Transactional
+    @Override
+    public Integer total() {
+        User user = UserContext.get();
+        Boolean isAdmin = user != null && UserRoleEnum.fromValue(user.getRole()) == UserRoleEnum.ADMIN;
+        return problemMapper.total(isAdmin);
+    }
+
 }

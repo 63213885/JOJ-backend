@@ -2,6 +2,8 @@ package com.joj.user.counter.service;
 
 import com.joj.common.core.model.entity.UserStats;
 
+import java.util.List;
+
 /**
  * @author jzz
  * @github <a href="https://github.com/63213885">63213885</a>
@@ -38,5 +40,7 @@ public interface UserStatsService {
 
     // 查
     UserStats findByUserId(Long userId);
+
+    List<UserStats> selectUserStatsByIds(List<Long> userIds);
 
 }

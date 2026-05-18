@@ -1,6 +1,6 @@
 package com.joj.user.counter.service.impl;
 
-import com.joj.user.profile.mapper.UserStatsMapper;
+import com.joj.user.counter.mapper.UserStatsMapper;
 import com.joj.common.core.model.entity.UserStats;
 import com.joj.user.counter.service.UserStatsService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author jzz
@@ -23,9 +24,8 @@ public class UserStatsServiceImpl implements UserStatsService {
     @Resource
     private UserStatsMapper userStatsMapper;
 
-
-    @Override
     @Transactional
+    @Override
     public void createUserStats(Long userId) {
         UserStats userStats = new UserStats();
         userStats.setUserId(userId);
@@ -46,8 +46,8 @@ public class UserStatsServiceImpl implements UserStatsService {
         userStatsMapper.insert(userStats);
     }
 
-    @Override
     @Transactional
+    @Override
     public void updateUserStats(UserStats userStats) {
         userStats.setUpdateTime(LocalDateTime.now());
         userStatsMapper.updateById(userStats);
@@ -113,10 +113,16 @@ public class UserStatsServiceImpl implements UserStatsService {
         userStatsMapper.incrementPkWinCount(userId);
     }
 
-    @Override
     @Transactional
+    @Override
     public UserStats findByUserId(Long userId) {
         return userStatsMapper.findById(userId);
+    }
+
+    @Transactional
+    @Override
+    public List<UserStats> selectUserStatsByIds(List<Long> userIds) {
+        return userStatsMapper.selectUserStatsByIds(userIds);
     }
 
 }

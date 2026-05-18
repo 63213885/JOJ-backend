@@ -1,6 +1,6 @@
 package com.joj.user.auth.controller.dto;
 
-import com.joj.user.auth.model.IdentifierType;
+import com.joj.common.core.model.enums.IdentifierType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

@@ -2,19 +2,20 @@ package com.joj.user.auth.service.impl;
 
 import com.joj.common.core.exception.BusinessException;
 import com.joj.common.core.exception.ErrorCode;
+import com.joj.common.core.model.enums.UserStatusEnum;
 import com.joj.user.auth.controller.dto.*;
 import com.joj.common.core.model.entity.User;
-import com.joj.user.auth.model.IdentifierType;
+import com.joj.common.core.model.enums.IdentifierType;
 import com.joj.common.core.model.vo.LoginUserVO;
 import com.joj.common.core.model.constant.UserConstant;
 import com.joj.user.auth.service.AuthService;
-import com.joj.user.auth.service.UserService;
-import com.joj.user.auth.verification.model.SendCodeResult;
-import com.joj.user.auth.verification.model.VerificationCheckResult;
-import com.joj.user.auth.verification.model.VerificationCodeStatus;
-import com.joj.user.auth.verification.model.VerificationScene;
-import com.joj.user.auth.verification.service.VerificationService;
-import com.joj.user.auth.verification.util.IdentifierValidator;
+import com.joj.user.user.service.UserService;
+import com.joj.user.verification.model.SendCodeResult;
+import com.joj.user.verification.model.VerificationCheckResult;
+import com.joj.user.verification.model.VerificationCodeStatus;
+import com.joj.user.verification.model.VerificationScene;
+import com.joj.user.verification.service.VerificationService;
+import com.joj.user.verification.util.IdentifierValidator;
 import com.joj.user.counter.service.UserStatsService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -189,16 +190,15 @@ public class AuthServiceImpl implements AuthService {
         user.setPhone(identifierType == IdentifierType.PHONE ? identifier : null);
         user.setEmail(identifierType == IdentifierType.EMAIL ? identifier : null);
         user.setRole("user");
-        user.setStatus(0);
-        user.setAvatarUrl("https://cdn.acwing.com/media/user/profile/photo/89908_lg_f2e736518d.jpg");
-        user.setBio("这个用户很懒，什么都没有留下");
-        user.setSchool("bilibili大学");
+        user.setStatus(UserStatusEnum.NORMAL.getValue());
+        user.setAvatarUrl(UserConstant.USER_AVATAR_URL);
+        user.setBio(UserConstant.USER_BIO);
+        user.setSchool(UserConstant.USER_SCHOOL);
 //        user.setLastLoginTime();
 //        user.setLastLoginIp();
-        user.setIsDelete(0);
+//        user.setIsDelete(0);
 
         User newUser = userService.createUser(user);
-        userStatsService.createUserStats(newUser.getId());
         return newUser.getId();
     }
 
@@ -255,7 +255,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不完整，无法确定登录方式");
         }
 
-        if (user.getStatus() == 1) {
+        if (UserStatusEnum.fromValue(user.getStatus()) == UserStatusEnum.BANNED) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "账号已封禁");
         }
 

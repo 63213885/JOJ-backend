@@ -2,7 +2,7 @@ package com.joj.user.inner;
 
 import com.joj.api.UserFeignClient;
 import com.joj.common.core.model.vo.UserVO;
-import com.joj.user.auth.service.UserService;
+import com.joj.user.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

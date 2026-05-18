@@ -1,6 +1,5 @@
-package com.joj.user.auth.controller.dto;
+package com.joj.user.verification.model;
 
-import com.joj.user.verification.model.VerificationScene;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,18 +8,19 @@ import lombok.NoArgsConstructor;
 /**
  * @author jzz
  * @github <a href="https://github.com/63213885">63213885</a>
- * @createtime 2026/4/9 23:17
+ * @createtime 2026/4/9 18:08
  */
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendCodeResponse {
+public class SendCodeResult {
 
     String identifier;
 
     VerificationScene scene;
 
     int expireSeconds;
+
 }

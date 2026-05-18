@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.joj.user.auth.mapper.UserMapper">
+<mapper namespace="com.joj.user.user.mapper.UserMapper">
 
     <resultMap id="UserResultMap" type="com.joj.common.core.model.entity.User">
         <id column="id" property="id"/>
@@ -147,6 +147,37 @@
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </select>
+
+    <select id="selectUserPage" resultMap="UserResultMap">
+        select *
+        from user
+
+        <choose>
+            <when test="sortField == 'id'">
+                order by id
+            </when>
+            <otherwise>
+                order by id
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="sortOrder == 'ascend' or sortOrder == 'asc'">
+                asc
+            </when>
+            <otherwise>
+                desc
+            </otherwise>
+        </choose>
+
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(*)
+        from user
+        where is_delete = 0
     </select>
 
 </mapper>

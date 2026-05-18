@@ -3,6 +3,8 @@ package com.joj.user.relation.controller;
 import com.joj.common.core.context.UserContext;
 import com.joj.common.core.exception.BusinessException;
 import com.joj.common.core.exception.ErrorCode;
+import com.joj.common.core.model.dto.PageRequest;
+import com.joj.common.core.model.dto.PageResponse;
 import com.joj.common.core.model.result.Result;
 import com.joj.common.core.model.entity.User;
 import com.joj.common.web.annotation.AuthCheck;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -55,34 +58,44 @@ public class RelationController {
 
     @AuthCheck
     @GetMapping("/following")
-    public Result<List<UserVO>> following(@RequestParam(value = "userId", required = false) Long userId,
-                                          @RequestParam(value = "limit", defaultValue = "20") int limit,
-                                          @RequestParam(value = "offset", defaultValue = "0") int offset) {
-        if (limit < 1 || limit > 100) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "limit参数错误");
-        }
-        if (offset < 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "offset参数错误");
-        }
+    public Result<PageResponse<UserVO>> following(@RequestParam Long userId, @Valid PageRequest pageRequest) {
+        int current = pageRequest.getCurrent();
+        int pageSize = pageRequest.getPageSize();
+        String sortField = pageRequest.getSortField();
+        String sortOrder = pageRequest.getSortOrder();
+
+        int limit = pageSize;
+        int offset = (current - 1) * pageSize;
         long targetId = userId != null ? userId : UserContext.get().getId();
         List<UserVO> followingProfiles = relationService.followingProfiles(targetId, limit, offset);
-        return Result.success(followingProfiles);
+        int total = relationService.totalFollowing(targetId);
+        return Result.success(
+                PageResponse.<UserVO>builder()
+                        .records(followingProfiles)
+                        .total(total)
+                        .build()
+        );
     }
 
     @AuthCheck
     @GetMapping("/followers")
-    public Result<List<UserVO>> followers(@RequestParam(value = "userId", required = false) Long userId,
-                                          @RequestParam(value = "limit", defaultValue = "20") int limit,
-                                           @RequestParam(value = "offset", defaultValue = "0") int offset) {
-        if (limit < 1 || limit > 100) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "limit参数错误");
-        }
-        if (offset < 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "offset参数错误");
-        }
+    public Result<PageResponse<UserVO>> followers(@RequestParam Long userId, @Valid PageRequest pageRequest) {
+        int current = pageRequest.getCurrent();
+        int pageSize = pageRequest.getPageSize();
+        String sortField = pageRequest.getSortField();
+        String sortOrder = pageRequest.getSortOrder();
+
+        int limit = pageSize;
+        int offset = (current - 1) * pageSize;
         long targetId = userId != null ? userId : UserContext.get().getId();
         List<UserVO> followersProfiles = relationService.followersProfiles(targetId, limit, offset);
-        return Result.success(followersProfiles);
+        int total = relationService.totalFollowers(targetId);
+        return Result.success(
+                PageResponse.<UserVO>builder()
+                        .records(followersProfiles)
+                        .total(total)
+                        .build()
+        );
     }
 
 }

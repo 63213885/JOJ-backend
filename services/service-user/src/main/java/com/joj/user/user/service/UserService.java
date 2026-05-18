@@ -51,6 +51,8 @@ public interface UserService {
 
     List<User> listByIds(List<Long> ids);
 
-    PageResponse<UserVO> listUserPage(PageRequest pageRequest);
+    List<UserVO> listUsers(int offset, int limit, String sortField, String sortOrder);
+
+    int total();
 
 }

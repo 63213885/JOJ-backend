@@ -1,6 +1,7 @@
 package com.joj.user.relation.service;
 
 import com.joj.common.core.model.vo.UserVO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -22,5 +23,9 @@ public interface RelationService {
     List<UserVO> followingProfiles(long userId, int limit, int offset);
 
     List<UserVO> followersProfiles(long userId, int limit, int offset);
+
+    int totalFollowers(long userId);
+
+    int totalFollowing(long userId);
 
 }

@@ -111,4 +111,15 @@ public class RelationServiceImpl implements RelationService {
         List<Long> ids = followers(userId, limit, offset);
         return toProfiles(ids);
     }
+
+    @Transactional
+    public int totalFollowers(long userId) {
+        return userStatsService.selectFollowerCount(userId);
+    }
+
+    @Transactional
+    public int totalFollowing(long userId) {
+        return userStatsService.selectFollowingCount(userId);
+    }
+
 }

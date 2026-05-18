@@ -3,6 +3,7 @@ package com.joj.user.counter.mapper;
 import com.joj.common.core.model.entity.UserStats;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,5 +49,9 @@ public interface UserStatsMapper {
     UserStats findById(@Param("userId") Long userId);
 
     List<UserStats> selectUserStatsByIds(@Param("userIds") List<Long> userIds);
+
+    int selectFollowerCount(@Param("userId") Long userId);
+
+    int selectFollowingCount(@Param("userId") Long userId);
 
 }

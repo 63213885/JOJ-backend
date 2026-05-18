@@ -186,13 +186,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public PageResponse<UserVO> listUserPage(PageRequest pageRequest) {
-        int current = pageRequest.getCurrent();
-        int pageSize = pageRequest.getPageSize();
-        String sortField = pageRequest.getSortField();
-        String sortOrder = pageRequest.getSortOrder();
-
-        List<User> users = userMapper.selectUserPage((current - 1) * pageSize, pageSize, sortField, sortOrder);
+    public List<UserVO> listUsers(int offset, int limit, String sortField, String sortOrder) {
+        List<User> users = userMapper.selectUserPage(offset, limit, sortField, sortOrder);
         List<Long> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
         List<UserStats> userStats = userStatsService.selectUserStatsByIds(userIds);
 
@@ -200,10 +195,11 @@ public class UserServiceImpl implements UserService {
         for (int i = 0; i < users.size(); i++) {
             userVOs.add(UserVO.from(users.get(i), userStats.get(i)));
         }
+        return userVOs;
+    }
 
-        return PageResponse.<UserVO>builder()
-                .records(userVOs)
-                .total(userMapper.count())
-                .build();
+    @Transactional
+    public int total() {
+        return userMapper.total();
     }
 }

@@ -50,5 +50,5 @@ public interface UserMapper {
                               @Param("sortField") String sortField,
                               @Param("sortOrder") String sortOrder);
 
-    Integer count();
+    int total();
 }

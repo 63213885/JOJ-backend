@@ -1,6 +1,7 @@
 package com.joj.user.user.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.joj.common.core.exception.BusinessException;
 import com.joj.common.core.exception.ErrorCode;
 import com.joj.common.core.model.constant.UserConstant;
@@ -13,8 +14,11 @@ import com.joj.common.core.model.result.Result;
 import com.joj.common.core.model.vo.UserVO;
 import com.joj.common.web.annotation.AuthCheck;
 import com.joj.user.user.controller.dto.CreateUserRequest;
+import com.joj.user.user.mapper.UserMapper;
 import com.joj.user.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,6 +39,10 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserMapper userMapper;
 
     @AuthCheck(mustRole = UserRoleEnum.ADMIN)
     @PostMapping("/create")
@@ -55,6 +63,10 @@ public class UserController {
 
         User user = BeanUtil.copyProperties(request, User.class);
 
+        if (StrUtil.isNotBlank(user.getPasswordHash())) {
+            user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        }
+
         user.setRole(UserRoleEnum.USER.getValue());
         user.setStatus(UserStatusEnum.NORMAL.getValue());
         user.setAvatarUrl(UserConstant.USER_AVATAR_URL);
@@ -71,8 +83,21 @@ public class UserController {
 
     @GetMapping("/list")
     public Result<PageResponse<UserVO>> listUserPage(@Valid PageRequest pageRequest) {
-        PageResponse<UserVO> users = userService.listUserPage(pageRequest);
-        return Result.success(users);
+        int current = pageRequest.getCurrent();
+        int pageSize = pageRequest.getPageSize();
+        String sortField = pageRequest.getSortField();
+        String sortOrder = pageRequest.getSortOrder();
+
+        int offset = (current - 1) * pageSize;
+        int limit = pageSize;
+        List<UserVO> users = userService.listUsers(offset, limit, sortField, sortOrder);
+        int total = userService.total();
+        return Result.success(
+                PageResponse.<UserVO>builder()
+                        .records(users)
+                        .total(total)
+                        .build()
+        );
     }
 
 }

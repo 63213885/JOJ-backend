@@ -155,4 +155,16 @@
         </foreach>
     </select>
 
+    <select id="selectFollowerCount" resultType="java.lang.Integer">
+        SELECT follower_count
+        FROM user_stats
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectFollowingCount" resultType="java.lang.Integer">
+        SELECT following_count
+        FROM user_stats
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>

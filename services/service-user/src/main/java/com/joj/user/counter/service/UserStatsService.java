@@ -43,4 +43,8 @@ public interface UserStatsService {
 
     List<UserStats> selectUserStatsByIds(List<Long> userIds);
 
+    int selectFollowerCount(Long userId);
+
+    int selectFollowingCount(Long userId);
+
 }

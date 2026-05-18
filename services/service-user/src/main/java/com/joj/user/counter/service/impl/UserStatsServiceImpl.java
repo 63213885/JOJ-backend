@@ -125,4 +125,16 @@ public class UserStatsServiceImpl implements UserStatsService {
         return userStatsMapper.selectUserStatsByIds(userIds);
     }
 
+    @Transactional
+    @Override
+    public int selectFollowerCount(Long userId) {
+        return userStatsMapper.selectFollowerCount(userId);
+    }
+
+    @Transactional
+    @Override
+    public int selectFollowingCount(Long userId) {
+        return userStatsMapper.selectFollowingCount(userId);
+    }
+
 }

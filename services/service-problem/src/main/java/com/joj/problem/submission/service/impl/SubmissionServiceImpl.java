@@ -129,8 +129,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Transactional
     @Override
-    public List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest) {
-        List<Submission> listSubmission = submissionMapper.listSubmissions(submissionQueryRequest);
+    public List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest, Integer offset, Integer limit) {
+        List<Submission> listSubmission = submissionMapper.listSubmissions(submissionQueryRequest, offset, limit);
         log.info("listSubmission =  {}", listSubmission);
         return listSubmission.stream().map(submission -> {
             return toSubmissionVO(submission);

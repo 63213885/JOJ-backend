@@ -112,11 +112,21 @@
         <include refid="SubmissionColumns"/>
         from submission
         <trim prefix="where" suffixOverrides="and">
-            <if test="userId != null">user_id = #{userId} and</if>
-            <if test="problemId != null">problem_id = #{problemId} and</if>
-            <if test="contestId != null">contest_id = #{contestId} and</if>
-            <if test="language != null and language != ''">language = #{language} and</if>
-            <if test="status != null and status != ''">status = #{status} and</if>
+            <if test="submissionQueryRequest.userId != null">
+                user_id = #{submissionQueryRequest.userId} and
+            </if>
+            <if test="submissionQueryRequest.problemId != null">
+                problem_id = #{submissionQueryRequest.problemId} and
+            </if>
+            <if test="submissionQueryRequest.contestId != null">
+                contest_id = #{submissionQueryRequest.contestId} and
+            </if>
+            <if test="submissionQueryRequest.language != null and language != ''">
+                language = #{submissionQueryRequest.language} and
+            </if>
+            <if test="submissionQueryRequest.status != null and status != ''">
+                status = #{submissionQueryRequest.status} and
+            </if>
             is_delete = 0
         </trim>
         order by submit_time desc

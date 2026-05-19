@@ -1,6 +1,8 @@
 package com.joj.problem.submission.controller;
 
 import com.joj.common.core.context.UserContext;
+import com.joj.common.core.model.dto.PageRequest;
+import com.joj.common.core.model.dto.PageResponse;
 import com.joj.common.core.model.enums.SubmissionLanguageEnum;
 import com.joj.common.core.model.enums.SubmissionStatusEnum;
 import com.joj.common.core.model.enums.UserRoleEnum;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -62,11 +65,23 @@ public class SubmissionController {
     }
 
     @GetMapping("/list")
-    public Result<List<SubmissionVO>> listSubmissions(SubmissionQueryRequest request) {
+    public Result<PageResponse<SubmissionVO>> listSubmissions(@Valid PageRequest pageRequest, SubmissionQueryRequest request) {
         log.info("SubmissionQueryRequest =  {}", request);
-        List<SubmissionVO> list = submissionService.listSubmissionVO(request);
+        int current = pageRequest.getCurrent();
+        int pageSize = pageRequest.getPageSize();
+        String sortField = pageRequest.getSortField();
+        String sortOrder = pageRequest.getSortOrder();
+
+        int offset = (current - 1) * pageSize;
+        int limit = pageSize;
+        List<SubmissionVO> list = submissionService.listSubmissionVO(request, offset, limit);
         log.info("listSubmissions =  {}", list);
-        return Result.success(list);
+        return Result.success(
+                PageResponse.<SubmissionVO>builder()
+                        .records(list)
+                        .total(null)
+                        .build()
+        );
     }
 
     @GetMapping("/language/list")

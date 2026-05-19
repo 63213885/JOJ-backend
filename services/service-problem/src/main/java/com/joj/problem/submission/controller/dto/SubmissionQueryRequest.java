@@ -29,8 +29,4 @@ public class SubmissionQueryRequest {
 
     private String status;
 
-    private Integer limit;
-
-    private Integer offset;
-
 }

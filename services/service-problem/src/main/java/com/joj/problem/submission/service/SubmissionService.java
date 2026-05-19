@@ -31,6 +31,6 @@ public interface SubmissionService {
 
     SubmissionVO getSubmissionVO(Long id);
 
-    List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest);
+    List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest, Integer offset, Integer limit);
 
 }

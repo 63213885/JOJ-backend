@@ -21,3 +21,13 @@ public class GatewayApplication {
     }
 
 }
+
+/*
+
+本地集群：
+编辑配置 -> 修改选项 -> 程序实参 -> --server.port=18083
+
+服务运行成功但是JMX连接失败：
+编辑配置 -> 修改选项 -> 添加虚拟机选项 -> -Djava.rmi.server.hostname=127.0.0.1 -Djava.net.preferIPv4Stack=true
+
+ */

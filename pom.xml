@@ -15,9 +15,13 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>gateway</module>
-        <module>services</module>
         <module>common</module>
+        <module>gateway</module>
+        <module>api</module>
+        <module>service-user</module>
+        <module>service-problem</module>
+        <module>service-judge</module>
+        <module>service-code-sandbox</module>
     </modules>
 
     <groupId>com.joj</groupId>

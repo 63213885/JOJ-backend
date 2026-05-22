@@ -22,6 +22,7 @@
         <module>service-problem</module>
         <module>service-judge</module>
         <module>service-code-sandbox</module>
+        <module>service-media</module>
     </modules>
 
     <groupId>com.joj</groupId>

@@ -131,3 +131,14 @@ oss:
 # 代码沙箱配置
 codesandbox:
   type: remote
+
+minio:
+  endpoint: ${joj.minio.endpoint}
+  public-endpoint: ${joj.minio.public-endpoint}
+  access-key: ${joj.minio.access-key}
+  secret-key: ${joj.minio.secret-key}
+  bucket:
+    image: ${joj.minio.bucket.image}
+    video: ${joj.minio.bucket.video}
+    testcase: ${joj.minio.bucket.testcase}
+    document: ${joj.minio.bucket.document}

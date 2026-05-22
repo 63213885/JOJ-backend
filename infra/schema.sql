@@ -148,6 +148,61 @@ create table if not exists submission
   default charset = utf8mb4 comment ='提交记录表';
 
 
+create table if not exists media_file
+(
+    id                bigint unsigned not null auto_increment comment '文件ID',
+
+    original_filename varchar(255)    not null comment '原始文件名',
+    content_type      varchar(128)    null comment 'MIME类型',
+
+    md5               char(32)        not null comment '文件MD5值',
+    file_size         bigint unsigned not null default 0 comment '文件大小，单位字节',
+
+    bucket_name       varchar(64)     not null comment 'MinIO桶名称',
+    object_name       varchar(512)    not null comment 'MinIO对象路径',
+
+    access_type       tinyint unsigned not null default 0 comment '访问类型：0私有 1公开',
+    creator_id        bigint unsigned null comment '上传人ID',
+
+    create_time       datetime        not null default current_timestamp comment '创建时间',
+    update_time       datetime        not null default current_timestamp on update current_timestamp comment '更新时间',
+    is_deleted        tinyint unsigned not null default 0 comment '是否删除',
+
+    primary key (id),
+
+    unique key uk_bucket_object (bucket_name, object_name),
+    key idx_md5_size (md5, file_size),
+    key idx_uploader_id (creator_id),
+    key idx_bucket_name (bucket_name)
+) engine = InnoDB default charset = utf8mb4 comment = '文件表';
+
+
+create table if not exists courses
+(
+    id                   bigint unsigned not null auto_increment comment '课程ID',
+    creator_id           bigint unsigned not null comment '创建者ID',
+
+    sort                 int             not null default 0 comment '排序',
+
+    title                varchar(256)   not null comment '课程标题',
+    cover_url            varchar(512)   null comment '封面',
+    description          text           null comment '课程描述',
+
+    price                decimal(10,2)  not null default 0.00 comment '价格',
+    original_price       decimal(10,2)  not null default 0.00 comment '原价',
+    sale_count           int unsigned   not null default 0 comment '销量',
+
+    status               tinyint        not null default 0 comment '状态：0下架 1上架',
+
+    create_time          datetime       not null default current_timestamp,
+    update_time          datetime       not null default current_timestamp on update current_timestamp,
+    is_delete            tinyint        not null default 0,
+
+    primary key (id),
+    key idx_status (status),
+    key idx_sort (sort)
+) engine=InnoDB default charset=utf8mb4 comment='课程表';
+
 
 # create table if not exists user_problem_status
 # (
@@ -205,30 +260,6 @@ create table if not exists submission
 #     key idx_user_id (user_id)
 # ) engine=InnoDB default charset=utf8mb4 comment='比赛报名表';
 #
-# create table if not exists courses
-# (
-#     id                   bigint unsigned not null auto_increment comment '课程ID',
-#
-#     title                varchar(256)   not null comment '课程标题',
-#     cover_url            varchar(512)   null comment '封面',
-#     description          text           null comment '课程描述',
-#
-#     price                decimal(10,2)  not null default 0.00 comment '价格',
-#     original_price       decimal(10,2)  not null default 0.00 comment '原价',
-#
-#     teacher_id           bigint unsigned null comment '讲师ID',
-#     status               tinyint        not null default 0 comment '状态：0下架 1上架',
-#
-#     sale_count           int unsigned   not null default 0 comment '销量',
-#
-#     create_time          datetime       not null default current_timestamp,
-#     update_time          datetime       not null default current_timestamp on update current_timestamp,
-#     is_deleted           tinyint        not null default 0,
-#
-#     primary key (id),
-#     key idx_teacher_id (teacher_id),
-#     key idx_status (status)
-# ) engine=InnoDB default charset=utf8mb4 comment='课程表';
 #
 # create table if not exists course_orders
 # (

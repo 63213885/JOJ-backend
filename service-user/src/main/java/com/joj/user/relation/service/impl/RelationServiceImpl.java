@@ -85,7 +85,7 @@ public class RelationServiceImpl implements RelationService {
 
         List<UserVO> userVOS = new ArrayList<>();
         for (User user : users) {
-            userVOS.add(UserVO.from(user));
+            userVOS.add(userService.getUserVOById(user.getId()));
         }
         return userVOS;
     }

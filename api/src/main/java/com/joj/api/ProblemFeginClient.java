@@ -3,6 +3,8 @@ package com.joj.api;
 import com.joj.common.core.model.dto.UpdateSubmissionStatusRequest;
 import com.joj.common.core.model.entity.Problem;
 import com.joj.common.core.model.entity.Submission;
+import com.joj.common.web.config.FeignCookieConfig;
+import com.joj.common.web.config.FeignMultipartConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +14,13 @@ import org.springframework.web.bind.annotation.*;
  * @createtime 2026/5/14 21:37
  */
 
-@FeignClient(name = "service-problem", path = "/api/inner")
+@FeignClient(
+        name = "service-problem",
+        path = "/api/inner",
+        configuration = {
+                FeignCookieConfig.class
+        }
+)
 public interface ProblemFeginClient {
 
     @GetMapping("/problem/{id}")

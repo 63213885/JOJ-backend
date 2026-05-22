@@ -1,5 +1,8 @@
 package com.joj.user.profile.controller;
 
+import cn.hutool.core.io.FileUtil;
+import com.joj.common.core.exception.BusinessException;
+import com.joj.common.core.exception.ErrorCode;
 import com.joj.common.core.model.result.Result;
 import com.joj.common.web.annotation.AuthCheck;
 import com.joj.user.profile.controller.dto.UpdateProfileDTO;
@@ -7,10 +10,12 @@ import com.joj.common.core.model.vo.UserDetailVO;
 import com.joj.common.core.model.vo.UserVO;
 import com.joj.user.profile.service.ProfileService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 
 /**
  * @author jzz
@@ -47,7 +52,7 @@ public class ProfileController {
     }
 
     @AuthCheck
-    @PutMapping("/avatar")
+    @PutMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Result<String> uploadAvatar(@RequestPart("file") MultipartFile file) {
         String avatarUrl = profileService.uploadAvatar(file);
         return Result.success(avatarUrl);

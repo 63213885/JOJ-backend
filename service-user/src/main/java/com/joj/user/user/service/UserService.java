@@ -9,6 +9,8 @@ package com.joj.user.user.service;
 import com.joj.common.core.model.dto.PageRequest;
 import com.joj.common.core.model.dto.PageResponse;
 import com.joj.common.core.model.entity.User;
+import com.joj.common.core.model.vo.LoginUserVO;
+import com.joj.common.core.model.vo.UserDetailVO;
 import com.joj.common.core.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +30,22 @@ public interface UserService {
     // 改
     void updateUser(User user);
 
-    User updateIP(User user, HttpServletRequest request);
+    void updateIP(Long userId, HttpServletRequest request);
 
     void updateAvatar(Long userId, String url);
 
     // 查
     User getUserById(Long id);
 
+    UserVO getUserVO(User user);
+
     UserVO getUserVOById(Long id);
+
+    LoginUserVO getLoginUserVOById(Long id);
+
+    UserDetailVO getUserDetailVOById(Long id);
+
+
 
     User findByAccount(String account);
 

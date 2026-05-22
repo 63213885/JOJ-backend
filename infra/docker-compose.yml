@@ -3,7 +3,6 @@
 # docker compose -p joj down
 # -------------------------------
 
-version: '3.8'
 services:
   # -------------------------------
   # MySQL
@@ -26,7 +25,7 @@ services:
 #      - --binlog-row-image=FULL
     networks:
       - JojNetwork
-    restart: always # 崩溃后自动重启
+    restart: unless-stopped # 崩溃后自动重启
 
   # -------------------------------
   # Redis
@@ -41,7 +40,7 @@ services:
       - ./.redis-data:/data # 持久化
     networks:
       - JojNetwork
-    restart: always
+    restart: unless-stopped
 
 #  # -------------------------------
 #  # go-judge
@@ -71,7 +70,7 @@ services:
       - ./.rabbitmq-data:/var/lib/rabbitmq # 持久化
     networks:
       - JojNetwork
-    restart: always
+    restart: unless-stopped
 
   # -------------------------------
   # Nacos
@@ -93,7 +92,62 @@ services:
       - MODE=standalone # 单节点模式启动
       - PREFER_HOST_MODE=hostname # 支持 hostname
       - TZ=Asia/Shanghai # 控制时区
-    restart: always
+    restart: unless-stopped
+
+  # -------------------------------
+  # MinIO
+  # -------------------------------
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: joj-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      TZ: Asia/Shanghai
+    ports:
+      - "9000:9000"   # S3 API，后端访问
+      - "9001:9001"   # 控制台，浏览器访问
+    volumes:
+      - ./.minio-data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - JojNetwork
+    restart: unless-stopped
+
+  # -------------------------------
+  # MinIO 初始化
+  # -------------------------------
+  minio-init:
+    image: minio/mc:latest
+    container_name: joj-minio-init
+    depends_on:
+      - minio
+    networks:
+      - JojNetwork
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 minioadmin minioadmin; do
+        echo 'waiting for minio...';
+        sleep 2;
+      done;
+      
+      mc mb --ignore-existing local/image;
+      mc mb --ignore-existing local/video;
+      mc mb --ignore-existing local/testcase;
+      mc mb --ignore-existing local/document;
+      
+      mc anonymous set download local/image;
+      
+      mc anonymous set none local/video;
+      mc anonymous set none local/testcase;
+      mc anonymous set none local/document;
+      
+      echo 'minio buckets initialized';
+      exit 0;
+      "
+    restart: "no"
+
+
 
 networks:
   JojNetwork:

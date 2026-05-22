@@ -1,8 +1,11 @@
 package com.joj.user.user.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.joj.common.core.model.dto.PageRequest;
 import com.joj.common.core.model.dto.PageResponse;
 import com.joj.common.core.model.entity.UserStats;
+import com.joj.common.core.model.vo.LoginUserVO;
+import com.joj.common.core.model.vo.UserDetailVO;
 import com.joj.user.user.mapper.UserMapper;
 import com.joj.common.core.model.entity.User;
 import com.joj.user.user.service.UserService;
@@ -10,8 +13,10 @@ import com.joj.user.auth.util.IpUtil;
 import com.joj.user.counter.service.UserStatsService;
 import com.joj.common.core.model.vo.UserVO;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +39,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Resource
     private UserStatsService userStatsService;
+
+    @Value("${minio.public-endpoint}")
+    private String publicEndpoint;
 
 //    增
     /**
@@ -82,13 +90,16 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Transactional
-    public User updateIP(User user, HttpServletRequest request) {
+    public void updateIP(Long userId, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
-        user.setLastLoginTime(now);
-        user.setLastLoginIp(IpUtil.getClientIp(request));
-        user.setUpdateTime(now);
-        userMapper.updateById(user);
-        return user;
+        userMapper.updateById(
+                User.builder()
+                        .id(userId)
+                        .lastLoginIp(IpUtil.getClientIp(request))
+                        .lastLoginTime(now)
+                        .updateTime(now)
+                        .build()
+        );
     }
 
     public void updateAvatar(Long userId, String url) {
@@ -112,13 +123,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserVO getUserVOById(Long id) {
-        User user = getUserById(id);
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
-        BeanUtils.copyProperties(userStatsService.findByUserId(id), userVO);
+    public UserVO getUserVO(User user) {
+        UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
+        BeanUtil.copyProperties(userStatsService.findByUserId(user.getId()), userVO);
+        userVO.setAvatarUrl(publicEndpoint + "/" + user.getAvatarUrl());
         return userVO;
     }
+
+    @Transactional(readOnly = true)
+    public UserVO getUserVOById(Long id) {
+        User user = getUserById(id);
+        return getUserVO(user);
+    }
+
+    @Transactional(readOnly = true)
+    public LoginUserVO getLoginUserVOById(Long id) {
+        User user = getUserById(id);
+        LoginUserVO loginUserVO = BeanUtil.copyProperties(user, LoginUserVO.class);
+        loginUserVO.setAvatarUrl(publicEndpoint + "/" + user.getAvatarUrl());
+        return loginUserVO;
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetailVO getUserDetailVOById(Long id) {
+        User user = getUserById(id);
+        UserDetailVO userDetailVO = BeanUtil.copyProperties(user, UserDetailVO.class);
+
+        userDetailVO.setAvatarUrl(publicEndpoint + "/" + user.getAvatarUrl());
+
+        if (StringUtils.hasText(userDetailVO.getPasswordHash())) {
+            userDetailVO.setPasswordHash("1");
+        } else {
+            userDetailVO.setPasswordHash("0");
+        }
+
+        if (StringUtils.hasText(userDetailVO.getPhone())) {
+            String phone = userDetailVO.getPhone();
+            userDetailVO.setPhone(phone.substring(0, 3) + "*****" + phone.substring(8));
+        }
+        return userDetailVO;
+    }
+
+
 
     /**
      * 根据账号查询用户。
@@ -193,7 +239,7 @@ public class UserServiceImpl implements UserService {
 
         List<UserVO> userVOs = new ArrayList<>();
         for (int i = 0; i < users.size(); i++) {
-            userVOs.add(UserVO.from(users.get(i), userStats.get(i)));
+            userVOs.add(getUserVO(users.get(i)));
         }
         return userVOs;
     }
@@ -202,4 +248,5 @@ public class UserServiceImpl implements UserService {
     public int total() {
         return userMapper.total();
     }
+
 }

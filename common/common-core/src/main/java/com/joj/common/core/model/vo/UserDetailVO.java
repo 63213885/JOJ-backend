@@ -43,13 +43,4 @@ public class UserDetailVO {
 
     private LocalDateTime createTime;
 
-    public static UserDetailVO from(User user) {
-        if (user == null) {
-            return null;
-        }
-        UserDetailVO userDetailVO = new UserDetailVO();
-        BeanUtil.copyProperties(user, userDetailVO);
-        return userDetailVO;
-    }
-
 }

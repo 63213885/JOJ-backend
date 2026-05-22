@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joj.media.mapper.MediaFileMapper">
+
+    <resultMap id="MediaFileResultMap" type="com.joj.media.model.entity.MediaFile">
+        <id property="id" column="id"/>
+
+        <result property="originalFilename" column="original_filename"/>
+        <result property="contentType" column="content_type"/>
+
+        <result property="md5" column="md5"/>
+        <result property="fileSize" column="file_size"/>
+
+        <result property="bucketName" column="bucket_name"/>
+        <result property="objectName" column="object_name"/>
+
+        <result property="accessType" column="access_type"/>
+        <result property="creatorId" column="creator_id"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="MediaFileColumns">
+        id,
+        original_filename,
+        content_type,
+        md5,
+        file_size,
+        bucket_name,
+        object_name,
+        access_type,
+        creator_id,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <insert id="insertMediaFile"
+            parameterType="com.joj.media.model.entity.MediaFile"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into media_file
+        (
+            original_filename,
+            content_type,
+            md5,
+            file_size,
+            bucket_name,
+            object_name,
+            access_type,
+            creator_id
+        )
+        values
+            (
+                #{originalFilename},
+                #{contentType},
+                #{md5},
+                #{fileSize},
+                #{bucketName},
+                #{objectName},
+                #{accessType},
+                #{creatorId}
+            )
+    </insert>
+
+    <update id="deleteMediaFileById">
+        update media_file
+        set is_deleted = 1
+        where id = #{id}
+          and is_deleted = 0
+    </update>
+
+    <select id="selectMediaFileById" resultMap="MediaFileResultMap">
+        select
+        <include refid="MediaFileColumns"/>
+        from media_file
+        where id = #{id}
+        and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="selectByBucketObject" resultMap="MediaFileResultMap">
+        select
+        <include refid="MediaFileColumns"/>
+        from media_file
+        where bucket_name = #{bucketName}
+        and object_name = #{objectName}
+        and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="selectByBucketMd5Size" resultMap="MediaFileResultMap">
+        select
+        <include refid="MediaFileColumns"/>
+        from media_file
+        where bucket_name = #{bucketName}
+        and md5 = #{md5}
+        and file_size = #{fileSize}
+        and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="existsByBucketMd5Size" resultType="boolean">
+        select count(1) > 0
+        from media_file
+        where bucket_name = #{bucketName}
+          and md5 = #{md5}
+          and file_size = #{fileSize}
+          and is_deleted = 0
+    </select>
+
+</mapper>

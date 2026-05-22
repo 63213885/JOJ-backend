@@ -2,12 +2,10 @@ package com.joj.user.inner;
 
 import com.joj.api.UserFeignClient;
 import com.joj.common.core.model.vo.UserVO;
+import com.joj.user.profile.service.ProfileService;
 import com.joj.user.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -21,15 +19,20 @@ import javax.annotation.Resource;
 @ApiIgnore
 @Slf4j
 @RestController
-@RequestMapping("/inner/user")
+@RequestMapping("/inner")
 public class UserInnerController implements UserFeignClient {
 
     @Resource
     private UserService userService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     public UserVO getUserVOById(@PathVariable Long id) {
         return userService.getUserVOById(id);
+    }
+
+    @PutMapping("/user/update/avatar")
+    public void updateAvatar(@RequestParam Long userId, @RequestParam String url) {
+        userService.updateAvatar(userId, url);
     }
 
 }

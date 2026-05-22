@@ -42,13 +42,4 @@ public class LoginUserVO implements Serializable {
 
     private String lastLoginIp;
 
-    public static LoginUserVO from(User user) {
-        if (user == null) {
-            return null;
-        }
-        LoginUserVO loginUserVO = new LoginUserVO();
-        BeanUtil.copyProperties(user, loginUserVO);
-        return loginUserVO;
-    }
-
 }

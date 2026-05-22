@@ -57,24 +57,4 @@ public class UserVO implements Serializable {
 
     private Integer contestCount;
 
-
-    public static UserVO from(User user) {
-        if (user == null) {
-            return null;
-        }
-        UserVO userVO = new UserVO();
-        BeanUtil.copyProperties(user, userVO);
-        return userVO;
-    }
-
-    public static UserVO from(User user, UserStats userStats) {
-        if (user == null || userStats == null) {
-            return null;
-        }
-        UserVO userVO = new UserVO();
-        BeanUtil.copyProperties(user, userVO);
-        BeanUtil.copyProperties(userStats, userVO);
-        return userVO;
-    }
-
 }

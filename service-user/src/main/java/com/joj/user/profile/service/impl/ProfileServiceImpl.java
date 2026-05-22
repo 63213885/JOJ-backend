@@ -1,5 +1,7 @@
 package com.joj.user.profile.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.joj.api.MediaFeignClient;
 import com.joj.common.core.context.UserContext;
 import com.joj.common.core.exception.BusinessException;
 import com.joj.common.core.exception.ErrorCode;
@@ -36,6 +38,8 @@ public class ProfileServiceImpl implements ProfileService {
     private UserStatsService userStatsService;
     @Resource
     private OssStorageService ossStorageService;
+    @Resource
+    private MediaFeignClient mediaFeignClient;
 
     @Override
     public UserVO getPublicProfile(String account) {
@@ -43,31 +47,13 @@ public class ProfileServiceImpl implements ProfileService {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
-        UserStats userStats = userStatsService.findByUserId(user.getId());
-        if (userStats == null) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "用户统计信息不存在");
-        }
-        UserVO userVO = UserVO.from(user, userStats);
-        userVO.setLastLoginIp(IpUtil.getProvince(userVO.getLastLoginIp()));
-        return userVO;
+        return userService.getUserVOById(user.getId());
     }
 
     @Override
     public UserDetailVO getPrivateProfile() {
         User user = UserContext.get();
-        // todo 这里是从redis session中拿的用户信息，可能有数据不一致问题。
-
-        UserDetailVO userDetailVO = UserDetailVO.from(user);
-        if (StringUtils.hasText(userDetailVO.getPasswordHash())) {
-            userDetailVO.setPasswordHash("1");
-        } else {
-            userDetailVO.setPasswordHash("0");
-        }
-        if (StringUtils.hasText(userDetailVO.getPhone())) {
-            String phone = userDetailVO.getPhone();
-            userDetailVO.setPhone(phone.substring(0, 3) + "*****" + phone.substring(8));
-        }
-        return userDetailVO;
+        return userService.getUserDetailVOById(user.getId());
     }
 
     @Override
@@ -90,9 +76,14 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public String uploadAvatar(MultipartFile file) {
-        User user = UserContext.get();
-        String url = ossStorageService.uploadAvatar(user.getId(), file);
-        userService.updateAvatar(user.getId(), url);
+//        User user = UserContext.get();
+//        String url = ossStorageService.uploadAvatar(user.getId(), file);
+//        userService.updateAvatar(user.getId(), url);
+//        return url;
+        String url = mediaFeignClient.uploadAvatar(file);
+        if (StrUtil.isBlank(url)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传头像失败");
+        }
         return url;
     }
 }

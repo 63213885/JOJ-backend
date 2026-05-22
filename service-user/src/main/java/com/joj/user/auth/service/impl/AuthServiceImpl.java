@@ -44,8 +44,7 @@ public class AuthServiceImpl implements AuthService {
     private VerificationService verificationService;
     @Resource
     private PasswordEncoder passwordEncoder;
-    @Resource
-    private UserStatsService userStatsService;
+
 
     /**
      * 校验标识（手机号/邮箱）的格式。
@@ -259,11 +258,11 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "账号已封禁");
         }
 
-        user = userService.updateIP(user, request);
+        userService.updateIP(user.getId(), request);
         // 3. 记录用户的登录态
         request.getSession().setAttribute(UserConstant.LOGIN_USER, user);
 
-        return LoginUserVO.from(user);
+        return userService.getLoginUserVOById(user.getId());
     }
 
     public Boolean logout(HttpServletRequest request) {

@@ -8,7 +8,9 @@ import com.joj.common.core.model.vo.LoginUserVO;
 import com.joj.common.core.model.entity.User;
 import com.joj.user.auth.service.AuthService;
 
+import com.joj.user.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,6 +30,8 @@ public class AuthController {
 
     @Resource
     private AuthService authService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/ok")
     public Result<String> ok() {
@@ -70,10 +74,11 @@ public class AuthController {
         return Result.success(ok);
     }
 
+    @AuthCheck
     @GetMapping("/me")
     public Result<LoginUserVO> getLoginUser() {
-        User loginUser = UserContext.get();
-        return Result.success(LoginUserVO.from(loginUser));
+        Long userId = UserContext.get().getId();
+        return Result.success(userService.getLoginUserVOById(userId));
     }
 
     @AuthCheck

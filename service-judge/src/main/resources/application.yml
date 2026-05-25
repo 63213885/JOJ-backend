@@ -70,6 +70,11 @@ spring:
       simple:
         prefetch: ${joj.rabbitmq.listener.simple.prefetch}
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml

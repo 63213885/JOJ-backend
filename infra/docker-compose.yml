@@ -104,6 +104,10 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
       TZ: Asia/Shanghai
+
+      # 未完成分片上传清理
+      MINIO_API_STALE_UPLOADS_EXPIRY: 24h
+      MINIO_API_STALE_UPLOADS_CLEANUP_INTERVAL: 6h
     ports:
       - "9000:9000"   # S3 API，后端访问
       - "9001:9001"   # 控制台，浏览器访问

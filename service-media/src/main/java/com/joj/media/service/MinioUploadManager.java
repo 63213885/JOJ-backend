@@ -9,11 +9,15 @@ package com.joj.media.service;
 
 import com.joj.api.UserFeignClient;
 import com.joj.common.core.context.UserContext;
+import com.joj.common.core.exception.BusinessException;
+import com.joj.common.core.exception.ErrorCode;
 import com.joj.media.config.MinioProperties;
-import com.joj.media.model.entity.MediaFile;
+import com.joj.common.core.model.entity.MediaFile;
+import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import io.minio.http.Method;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -25,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class MinioUploadManager {
@@ -177,7 +182,7 @@ public class MinioUploadManager {
                                 .build()
                 );
             }
-            userFeignClient.updateAvatar(UserContext.get().getId(), minioProperties.getBucket().getImage() + "/" + objectName);
+//            userFeignClient.updateAvatar(UserContext.get().getId(), minioProperties.getBucket().getImage() + "/" + objectName);
 
         } catch (Exception e) {
             try {
@@ -205,84 +210,33 @@ public class MinioUploadManager {
 
         uploadAndRecord(file, bucketName, objectName, checkResult, 1);
 
-        return minioProperties.getPublicEndpoint() + "/" + minioProperties.getBucket().getImage() + "/" + objectName;
+        return minioProperties.getBucket().getImage() + "/" + objectName;
     }
 
-//    /**
-//     * 数据库url -> public url
-//     * @param url
-//     * @return
-//     */
-//    public String getPublicEndpoint(String url) {
-//        return minioProperties.getPublicEndpoint();
-//    }
+    @Transactional(rollbackFor = Exception.class)
+    public String uploadCover(MultipartFile file) {
+        FileCheckResult checkResult = checkFile(file, COURSE_COVER_MAX_SIZE, IMAGE_TYPE_MAP);
+        String bucketName = minioProperties.getBucket().getImage();
+        String objectName = buildObjectName("cover", checkResult);
 
-//
-//    /**
-//     * 上传课程封面，返回公开访问 URL
-//     */
-//    @Transactional(rollbackFor = Exception.class)
-//    public String uploadCourseCover(MultipartFile file) {
-//        FileCheckResult checkResult = checkFile(file, COURSE_COVER_MAX_SIZE, IMAGE_TYPE_MAP);
-//
-//        String bucketName = minioProperties.getBucket().getImage();
-//        String objectName = buildObjectName("course/cover", checkResult);
-//
-//        uploadAndRecord(file, bucketName, objectName, checkResult, 1);
-//
-//        return getImageUrl(objectName);
-//    }
-//
-//    /**
-//     * 上传课程视频，返回 objectName
-//     */
-//    @Transactional(rollbackFor = Exception.class)
-//    public String uploadCourseVideo(MultipartFile file) {
-//        FileCheckResult checkResult = checkFile(file, COURSE_VIDEO_MAX_SIZE, VIDEO_TYPE_MAP);
-//
-//        String bucketName = minioProperties.getBucket().getVideo();
-//        String objectName = buildObjectName("course/video", checkResult);
-//
-//        uploadAndRecord(file, bucketName, objectName, checkResult, 0);
-//
-//        return objectName;
-//    }
-//
-//    /**
-//     * 上传题目测试数据，返回 objectName
-//     */
-//    @Transactional(rollbackFor = Exception.class)
-//    public String uploadTestcase(Long problemId, MultipartFile file) {
-//        if (problemId == null) {
-//            throw new RuntimeException("题目ID不能为空");
-//        }
-//
-//        FileCheckResult checkResult = checkFile(file, TESTCASE_MAX_SIZE, TESTCASE_TYPE_MAP);
-//
-//        String bucketName = minioProperties.getBucket().getTestcase();
-//        String objectName = "problem/" + problemId + "/" + checkResult.getMd5() + "." + checkResult.getSuffix();
-//
-//        uploadAndRecord(file, bucketName, objectName, checkResult, 0);
-//
-//        return objectName;
-//    }
-//
-//    /**
-//     * 获取课程视频临时访问地址，30分钟过期
-//     */
-//    public String getCourseVideoUrl(String objectName) {
-//        try {
-//            return minioClient.getPresignedObjectUrl(
-//                    GetPresignedObjectUrlArgs.builder()
-//                            .method(Method.GET)
-//                            .bucket(minioProperties.getBucket().getVideo())
-//                            .object(objectName)
-//                            .expiry(30, TimeUnit.MINUTES)
-//                            .build()
-//            );
-//        } catch (Exception e) {
-//            throw new RuntimeException("生成视频访问地址失败", e);
-//        }
-//    }
+        uploadAndRecord(file, bucketName, objectName, checkResult, 1);
+
+        return minioProperties.getBucket().getImage() + "/" + objectName;
+    }
+
+    public String getPresignedGetUrl(String bucket, String objectKey, int expireSeconds) {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucket)
+                            .object(objectKey)
+                            .expiry(expireSeconds, TimeUnit.SECONDS)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成视频播放地址失败");
+        }
+    }
 
 }

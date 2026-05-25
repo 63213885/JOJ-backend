@@ -27,7 +27,7 @@ public interface UserFeignClient {
     @GetMapping("/user/{id}")
     UserVO getUserVOById(@PathVariable Long id);
 
-    @PutMapping("/user/update/avatar")
-    void updateAvatar(@RequestParam Long userId, @RequestParam String url);
+//    @PutMapping("/user/update/avatar")
+//    void updateAvatar(@RequestParam Long userId, @RequestParam String url);
 
 }

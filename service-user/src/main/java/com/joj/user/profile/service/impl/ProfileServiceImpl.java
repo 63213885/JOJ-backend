@@ -84,6 +84,7 @@ public class ProfileServiceImpl implements ProfileService {
         if (StrUtil.isBlank(url)) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传头像失败");
         }
+        userService.updateAvatar(UserContext.get().getId(), url);
         return url;
     }
 }

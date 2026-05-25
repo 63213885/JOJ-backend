@@ -1,6 +1,6 @@
 package com.joj.media.mapper;
 
-import com.joj.media.model.entity.MediaFile;
+import com.joj.common.core.model.entity.MediaFile;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

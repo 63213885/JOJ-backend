@@ -1,7 +1,7 @@
 package com.joj.media.service.Impl;
 
 import com.joj.media.mapper.MediaFileMapper;
-import com.joj.media.model.entity.MediaFile;
+import com.joj.common.core.model.entity.MediaFile;
 import com.joj.media.service.MediaFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -104,7 +104,6 @@ public class MediaFileServiceImpl implements MediaFileService {
         if (id == null) {
             throw new RuntimeException("文件ID不能为空");
         }
-
         return mediaFileMapper.selectMediaFileById(id);
     }
 

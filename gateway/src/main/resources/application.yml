@@ -23,6 +23,14 @@ spring:
           uri: lb://service-problem
           predicates:
             - Path=/api/problem/**, /api/submission/**
+        - id: media-route
+          uri: lb://service-media
+          predicates:
+            - Path=/api/media/**
+        - id: course-route
+          uri: lb://service-course
+          predicates:
+            - Path=/api/course/**
 
 logging:
   level:

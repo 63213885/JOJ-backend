@@ -30,9 +30,9 @@ public class UserInnerController implements UserFeignClient {
         return userService.getUserVOById(id);
     }
 
-    @PutMapping("/user/update/avatar")
-    public void updateAvatar(@RequestParam Long userId, @RequestParam String url) {
-        userService.updateAvatar(userId, url);
-    }
+//    @PutMapping("/user/update/avatar")
+//    public void updateAvatar(@RequestParam Long userId, @RequestParam String url) {
+//        userService.updateAvatar(userId, url);
+//    }
 
 }

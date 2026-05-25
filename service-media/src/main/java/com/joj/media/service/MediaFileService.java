@@ -1,7 +1,6 @@
 package com.joj.media.service;
 
-import com.joj.media.model.entity.MediaFile;
-import org.springframework.transaction.annotation.Transactional;
+import com.joj.common.core.model.entity.MediaFile;
 
 /**
  * @author jzz

@@ -1,5 +1,5 @@
 server:
-  port: 5051
+  port: 8085
   servlet:
     context-path: /api
 
@@ -69,6 +69,11 @@ spring:
     listener:
       simple:
         prefetch: ${joj.rabbitmq.listener.simple.prefetch}
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 
 mybatis:

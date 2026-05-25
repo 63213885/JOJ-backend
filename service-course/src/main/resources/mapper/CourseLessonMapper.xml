@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joj.course.mapper.CourseLessonMapper">
+
+    <resultMap id="CourseLessonResultMap" type="com.joj.common.core.model.entity.CourseLesson">
+        <id property="id" column="id"/>
+
+        <result property="courseId" column="course_id"/>
+
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+
+        <result property="videoFileId" column="video_file_id"/>
+        <result property="duration" column="duration"/>
+
+        <result property="problemItems"
+                column="problem_items"
+                typeHandler="com.joj.common.web.handler.mybatis.LongListTypeHandler"/>
+
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="CourseLessonColumns">
+        id
+        ,
+        course_id,
+        title,
+        description,
+        video_file_id,
+        duration,
+        problem_items,
+        sort,
+        status,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <insert id="insertCourseLesson"
+            parameterType="com.joj.common.core.model.entity.CourseLesson"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into course_lesson
+        (course_id,
+         title,
+         description,
+         video_file_id,
+         duration,
+         problem_items,
+         sort,
+         status)
+        values (#{courseId},
+                #{title},
+                #{description},
+                #{videoFileId},
+                #{duration},
+                #{problemItems, typeHandler=com.joj.common.web.handler.mybatis.LongListTypeHandler},
+                #{sort},
+                #{status})
+    </insert>
+
+    <update id="updateCourseLessonById"
+            parameterType="com.joj.common.core.model.entity.CourseLesson">
+        update course_lesson
+        <trim prefix="set" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+
+            <if test="videoFileId != null">video_file_id = #{videoFileId},</if>
+            <if test="duration != null">duration = #{duration},</if>
+
+            <if test="problemItems != null">
+                problem_items = #{problemItems, typeHandler=com.joj.common.web.handler.mybatis.LongListTypeHandler},
+            </if>
+
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+        and is_deleted = 0
+    </update>
+
+    <update id="deleteCourseLessonById">
+        update course_lesson
+        set is_deleted = 1
+        where id = #{id}
+          and is_deleted = 0
+    </update>
+
+    <select id="selectCourseLessonById" resultMap="CourseLessonResultMap">
+        select
+        <include refid="CourseLessonColumns"/>
+        from course_lesson
+        where id = #{id}
+        and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="listCourseLessonsByCourseId" resultMap="CourseLessonResultMap">
+        select
+        <include refid="CourseLessonColumns"/>
+        from course_lesson
+        <where>
+            course_id = #{courseId}
+            and is_deleted = 0
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by sort asc, id asc
+    </select>
+
+</mapper>

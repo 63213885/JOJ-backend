@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joj.media.mapper.MediaUploadPartMapper">
+
+    <resultMap id="MediaUploadPartResultMap" type="com.joj.common.core.model.entity.MediaUploadPart">
+        <id property="id" column="id"/>
+
+        <result property="taskId" column="task_id"/>
+        <result property="uploadId" column="upload_id"/>
+        <result property="partNumber" column="part_number"/>
+        <result property="etag" column="etag"/>
+        <result property="partSize" column="part_size"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="MediaUploadPartColumns">
+        id,
+        task_id,
+        upload_id,
+        part_number,
+        etag,
+        part_size,
+        create_time,
+        update_time
+    </sql>
+
+    <insert id="insertOrUpdatePart"
+            parameterType="com.joj.common.core.model.entity.MediaUploadPart"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into media_upload_part
+        (task_id,
+         upload_id,
+         part_number,
+         etag,
+         part_size)
+        values (#{taskId},
+                #{uploadId},
+                #{partNumber},
+                #{etag},
+                #{partSize}) on duplicate key
+        update
+            etag =
+        values (etag), part_size =
+        values (part_size), update_time = current_timestamp
+    </insert>
+
+    <select id="listByTaskId" resultMap="MediaUploadPartResultMap">
+        select
+        <include refid="MediaUploadPartColumns"/>
+        from media_upload_part
+        where task_id = #{taskId}
+        order by part_number asc
+    </select>
+
+    <select id="listUploadedPartNumbers" resultType="java.lang.Integer">
+        select part_number
+        from media_upload_part
+        where task_id = #{taskId}
+        order by part_number asc
+    </select>
+
+</mapper>

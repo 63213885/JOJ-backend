@@ -1,5 +1,7 @@
 package com.joj.api;
 
+import com.joj.common.core.model.entity.MediaFile;
+import com.joj.common.core.model.enums.UserRoleEnum;
 import com.joj.common.core.model.result.Result;
 import com.joj.common.web.annotation.AuthCheck;
 import com.joj.common.web.config.FeignCookieConfig;
@@ -17,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @FeignClient(
         name = "service-media",
-        path = "/api/file",
+        path = "/api/inner",
         configuration = {
                 FeignMultipartConfig.class,
                 FeignCookieConfig.class
@@ -27,6 +29,16 @@ public interface MediaFeignClient {
 
     @PostMapping(path = "/upload/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     String uploadAvatar(@RequestPart("file") MultipartFile file);
+
+    @PostMapping(path = "/upload/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    String uploadCover(@RequestPart("file") MultipartFile file);
+
+    @GetMapping("/{id}")
+    MediaFile selectMediaFileById(@PathVariable Long id);
+
+    @GetMapping("/video/play/url/presigned")
+    String getPresignedGetUrl(@RequestParam String bucket, @RequestParam String objectKey, @RequestParam int expireSeconds);
+
 
 //    @GetMapping("/public/endpoint")
 //    String getPublicAvatarUrl(String url);

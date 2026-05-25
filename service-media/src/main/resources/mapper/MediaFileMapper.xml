@@ -5,7 +5,7 @@
 
 <mapper namespace="com.joj.media.mapper.MediaFileMapper">
 
-    <resultMap id="MediaFileResultMap" type="com.joj.media.model.entity.MediaFile">
+    <resultMap id="MediaFileResultMap" type="com.joj.common.core.model.entity.MediaFile">
         <id property="id" column="id"/>
 
         <result property="originalFilename" column="original_filename"/>
@@ -41,7 +41,7 @@
     </sql>
 
     <insert id="insertMediaFile"
-            parameterType="com.joj.media.model.entity.MediaFile"
+            parameterType="com.joj.common.core.model.entity.MediaFile"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into media_file

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.joj.course.mapper.CourseMapper">
+
+    <resultMap id="CourseResultMap" type="com.joj.common.core.model.entity.Course">
+        <id property="id" column="id"/>
+
+        <result property="creatorId" column="creator_id"/>
+        <result property="sort" column="sort"/>
+
+        <result property="title" column="title"/>
+        <result property="coverUrl" column="cover_url"/>
+        <result property="description" column="description"/>
+
+        <result property="price" column="price"/>
+        <result property="originalPrice" column="original_price"/>
+        <result property="saleCount" column="sale_count"/>
+
+        <result property="status" column="status"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="CourseColumns">
+        id
+        ,
+        creator_id,
+        sort,
+        title,
+        cover_url,
+        description,
+        price,
+        original_price,
+        sale_count,
+        status,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <insert id="insertCourse"
+            parameterType="com.joj.common.core.model.entity.Course"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into course
+        (creator_id,
+         sort,
+         title,
+         cover_url,
+         description,
+         price,
+         original_price,
+         status)
+        values (#{creatorId},
+                #{sort},
+                #{title},
+                #{coverUrl},
+                #{description},
+                #{price},
+                #{originalPrice},
+                #{status})
+    </insert>
+
+    <update id="updateCourseById"
+            parameterType="com.joj.common.core.model.entity.Course">
+        update course
+        <trim prefix="set" suffixOverrides=",">
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="sort != null">sort = #{sort},</if>
+
+            <if test="title != null">title = #{title},</if>
+            <if test="coverUrl != null">cover_url = #{coverUrl},</if>
+            <if test="description != null">description = #{description},</if>
+
+            <if test="price != null">price = #{price},</if>
+            <if test="originalPrice != null">original_price = #{originalPrice},</if>
+            <if test="saleCount != null">sale_count = #{saleCount},</if>
+
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+        and is_deleted = 0
+    </update>
+
+    <update id="deleteCourseById">
+        update course
+        set is_deleted = 1
+        where id = #{id}
+          and is_deleted = 0
+    </update>
+
+    <select id="selectCourseById" resultMap="CourseResultMap">
+        select
+        <include refid="CourseColumns"/>
+        from course
+        where id = #{id}
+        and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="listCourses" resultMap="CourseResultMap">
+        select
+        <include refid="CourseColumns"/>
+        from course
+        <where>
+            is_deleted = 0
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by sort asc, id desc
+    </select>
+
+</mapper>

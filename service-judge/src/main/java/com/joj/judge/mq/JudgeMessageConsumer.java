@@ -1,6 +1,6 @@
 package com.joj.judge.mq;
 
-import com.joj.common.web.model.JudgeMessage;
+import com.joj.common.core.model.mq.JudgeMessage;
 import com.joj.judge.service.JudgeService;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;

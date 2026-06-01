@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author jzz
@@ -11,6 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @createtime 2026/5/21 16:56
  */
 
+@EnableScheduling
 @EnableFeignClients("com.joj.api")
 @EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = "com.joj")

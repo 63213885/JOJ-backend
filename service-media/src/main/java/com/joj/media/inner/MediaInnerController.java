@@ -2,15 +2,21 @@ package com.joj.media.inner;
 
 import com.joj.api.MediaFeignClient;
 import com.joj.common.core.model.enums.UserRoleEnum;
+import com.joj.common.core.model.vo.MediaVideoInfoVO;
 import com.joj.common.web.annotation.AuthCheck;
 import com.joj.common.core.model.entity.MediaFile;
 import com.joj.media.service.MediaFileService;
-import com.joj.media.service.MinioUploadManager;
+import com.joj.media.service.Impl.MinioUploadManager;
+import com.joj.media.service.MediaVideoService;
+import com.joj.media.service.MinioObjectService;
+import feign.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jzz
@@ -22,10 +28,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/inner")
 @RequiredArgsConstructor
-public class MediaInnerController implements MediaFeignClient {
+public class MediaInnerController {
 
     private final MinioUploadManager minioUploadManager;
     private final MediaFileService mediaFileService;
+    private final MediaVideoService mediaVideoService;
 
     @AuthCheck
     @PostMapping(path = "/upload/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -46,9 +53,30 @@ public class MediaInnerController implements MediaFeignClient {
         return mediaFileService.getById(id);
     }
 
-    @GetMapping("/video/play/url/presigned")
-    public String getPresignedGetUrl(@RequestParam String bucket, @RequestParam String objectKey, @RequestParam int expireSeconds) {
-        return minioUploadManager.getPresignedGetUrl(bucket, objectKey, expireSeconds);
+
+
+    @GetMapping("/files/{fileId}/video-info")
+    public MediaVideoInfoVO getVideoInfo(@PathVariable("fileId") Long fileId) {
+        return mediaVideoService.getVideoInfo(fileId);
+    }
+
+    @GetMapping("/files/{fileId}/hls/index")
+    public String getHlsIndex(@PathVariable("fileId") Long fileId) {
+        return mediaVideoService.getHlsIndex(fileId);
+    }
+
+    @GetMapping("/files/{fileId}/hls/key")
+    public String getObfuscatedHlsKeyBase64(@PathVariable("fileId") Long fileId,
+                                            @RequestParam("token") String token) {
+        return mediaVideoService.getObfuscatedHlsKeyBase64(fileId, token);
+    }
+
+
+    @GetMapping(value = "/files/{fileId}/hls/segment/{segmentName:.+}", produces = "video/mp2t")
+    public void getHlsSegment(@PathVariable("fileId") Long fileId,
+                              @PathVariable("segmentName") String segmentName,
+                              HttpServletResponse response) {
+        mediaVideoService.writeHlsSegment(fileId, segmentName, response);
     }
 
 }

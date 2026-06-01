@@ -1,6 +1,9 @@
 package com.joj.media.service;
 
 import com.joj.common.core.model.entity.MediaFile;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author jzz
@@ -20,6 +23,12 @@ public interface MediaFileService {
      */
     boolean deleteMediaFile(Long id);
 
+    boolean markTranscoding(Long fileId);
+
+    void markTranscodeSuccess(Long fileId, String hlsPrefix, Integer encryptType, byte[] encryptKey, String encryptIv);
+
+    void markTranscodeFailed(Long fileId);
+
     /**
      * 判断同 bucket 下是否已存在相同文件
      */
@@ -33,5 +42,7 @@ public interface MediaFileService {
     MediaFile getById(Long id);
 
     MediaFile getByBucketObject(String bucketName, String objectName);
+
+    List<Long> listNeedRetryTranscodeFileIds(Integer retryAfterMinutes, Integer limit);
 
 }

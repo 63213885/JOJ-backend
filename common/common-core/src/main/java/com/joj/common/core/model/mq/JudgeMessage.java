@@ -1,4 +1,4 @@
-package com.joj.common.web.model;
+package com.joj.common.core.model.mq;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

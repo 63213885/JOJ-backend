@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.joj.common.core.model.constant.SystemConstant.STATIC_RESOURCE_PREFIX;
+
 /**
  * @author jzz
  * @github <a href="https://github.com/63213885">63213885</a>
@@ -40,8 +42,6 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserStatsService userStatsService;
 
-    @Value("${minio.public-endpoint}")
-    private String publicEndpoint;
 
 //    增
     /**
@@ -85,9 +85,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 更新用户的最后登录 IP 和更新时间。
-     *
-     * @param user
-     * @return
+     * @param userId
+     * @param request
      */
     @Transactional
     public void updateIP(Long userId, HttpServletRequest request) {
@@ -126,7 +125,7 @@ public class UserServiceImpl implements UserService {
     public UserVO getUserVO(User user) {
         UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
         BeanUtil.copyProperties(userStatsService.findByUserId(user.getId()), userVO);
-        userVO.setAvatarUrl(publicEndpoint + "/" + user.getAvatarUrl());
+        userVO.setAvatarUrl(STATIC_RESOURCE_PREFIX + user.getAvatarUrl());
         return userVO;
     }
 
@@ -140,7 +139,7 @@ public class UserServiceImpl implements UserService {
     public LoginUserVO getLoginUserVOById(Long id) {
         User user = getUserById(id);
         LoginUserVO loginUserVO = BeanUtil.copyProperties(user, LoginUserVO.class);
-        loginUserVO.setAvatarUrl(publicEndpoint + "/" + user.getAvatarUrl());
+        loginUserVO.setAvatarUrl(STATIC_RESOURCE_PREFIX + user.getAvatarUrl());
         return loginUserVO;
     }
 
@@ -149,7 +148,7 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(id);
         UserDetailVO userDetailVO = BeanUtil.copyProperties(user, UserDetailVO.class);
 
-        userDetailVO.setAvatarUrl(publicEndpoint + "/" + user.getAvatarUrl());
+        userDetailVO.setAvatarUrl(STATIC_RESOURCE_PREFIX + user.getAvatarUrl());
 
         if (StringUtils.hasText(userDetailVO.getPasswordHash())) {
             userDetailVO.setPasswordHash("1");

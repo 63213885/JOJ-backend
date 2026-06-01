@@ -1,7 +1,7 @@
 package com.joj.problem.submission.service.impl;
 
 import com.joj.common.core.model.enums.SubmissionStatusEnum;
-import com.joj.common.web.model.JudgeMessage;
+import com.joj.common.core.model.mq.JudgeMessage;
 import com.joj.problem.mq.JudgeMessageProducer;
 import com.joj.problem.submission.mapper.SubmissionMapper;
 import com.joj.problem.submission.service.RejudgeBatchService;

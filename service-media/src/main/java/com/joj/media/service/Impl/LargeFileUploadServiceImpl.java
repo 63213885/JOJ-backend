@@ -1,6 +1,9 @@
 package com.joj.media.service.Impl;
 
 import com.joj.common.core.context.UserContext;
+import com.joj.common.core.model.enums.MediaEncryptTypeEnum;
+import com.joj.common.core.model.enums.MediaTranscodeStatusEnum;
+import com.joj.common.core.model.enums.MediaUploadTaskStatus;
 import com.joj.media.config.MinioProperties;
 import com.joj.media.mapper.MediaFileMapper;
 import com.joj.media.mapper.MediaUploadPartMapper;
@@ -9,11 +12,13 @@ import com.joj.media.model.dto.*;
 import com.joj.common.core.model.entity.MediaFile;
 import com.joj.common.core.model.entity.MediaUploadPart;
 import com.joj.common.core.model.entity.MediaUploadTask;
+import com.joj.media.mq.VideoTranscodeProducer;
 import com.joj.media.service.LargeFileUploadService;
-import com.joj.media.service.S3MultipartUploadManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
 
 import java.util.List;
@@ -39,10 +44,8 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
 
     private final MediaUploadPartMapper mediaUploadPartMapper;
 
-    private static final int STATUS_UPLOADING = 0;
-    private static final int STATUS_FINISHED = 1;
-    private static final int STATUS_ABORTED = 2;
-    private static final int STATUS_FAILED = 3;
+    private final VideoTranscodeProducer videoTranscodeProducer;
+
 
     private static final int ACCESS_PRIVATE = 0;
 
@@ -135,7 +138,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         task.setChunkCount(request.getChunkCount());
         task.setAccessType(ACCESS_PRIVATE);
         task.setCreatorId(creatorId);
-        task.setStatus(STATUS_UPLOADING);
+        task.setStatus(MediaUploadTaskStatus.UPLOADING.getValue());
 
         mediaUploadTaskMapper.insertUploadTask(task);
 
@@ -161,7 +164,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         }
 
         MediaUploadTask task = mediaUploadTaskMapper.selectById(taskId);
-        if (task == null || !Integer.valueOf(STATUS_UPLOADING).equals(task.getStatus())) {
+        if (task == null || !MediaUploadTaskStatus.UPLOADING.getValue().equals(task.getStatus())) {
             throw new RuntimeException("上传任务不存在或状态错误");
         }
         if (partNumber > task.getChunkCount()) {
@@ -200,7 +203,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         }
 
         MediaUploadTask task = mediaUploadTaskMapper.selectById(request.getTaskId());
-        if (task == null || !Integer.valueOf(STATUS_UPLOADING).equals(task.getStatus())) {
+        if (task == null || !MediaUploadTaskStatus.UPLOADING.getValue().equals(task.getStatus())) {
             throw new RuntimeException("上传任务不存在或状态错误");
         }
 
@@ -239,7 +242,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         }
 
         MediaUploadTask task = mediaUploadTaskMapper.selectById(request.getTaskId());
-        if (task == null || !Integer.valueOf(STATUS_UPLOADING).equals(task.getStatus())) {
+        if (task == null || !MediaUploadTaskStatus.UPLOADING.getValue().equals(task.getStatus())) {
             throw new RuntimeException("上传任务不存在或状态错误");
         }
 
@@ -267,6 +270,9 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         mediaFile.setAccessType(task.getAccessType());
         mediaFile.setCreatorId(task.getCreatorId());
 
+        mediaFile.setTranscodeStatus(MediaTranscodeStatusEnum.WAITING.getValue());
+        mediaFile.setEncryptType(MediaEncryptTypeEnum.NONE.getValue());
+
         try {
             mediaFileMapper.insertMediaFile(mediaFile);
         } catch (Exception e) {
@@ -277,7 +283,15 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
             mediaFile = existedFile;
         }
 
-        mediaUploadTaskMapper.updateStatusAndMediaFileId(task.getId(), STATUS_FINISHED, mediaFile.getId());
+        mediaUploadTaskMapper.updateStatusAndMediaFileId(task.getId(), MediaUploadTaskStatus.FINISHED.getValue(), mediaFile.getId());
+
+        MediaFile finalMediaFile = mediaFile;
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                videoTranscodeProducer.send(finalMediaFile.getId());
+            }
+        });
 
         return mediaFile.getId();
     }
@@ -293,7 +307,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         if (task == null) {
             return true;
         }
-        if (!Integer.valueOf(STATUS_UPLOADING).equals(task.getStatus())) {
+        if (!MediaUploadTaskStatus.UPLOADING.getValue().equals(task.getStatus())) {
             return true;
         }
 
@@ -303,7 +317,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
                 task.getUploadId()
         );
 
-        mediaUploadTaskMapper.updateStatus(taskId, STATUS_ABORTED);
+        mediaUploadTaskMapper.updateStatus(taskId, MediaUploadTaskStatus.ABORTED.getValue());
         return true;
     }
 

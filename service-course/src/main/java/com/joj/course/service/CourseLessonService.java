@@ -29,6 +29,6 @@ public interface CourseLessonService {
     List<CourseLessonVO> listCourseLessonVOsByCourseId(Long courseId);
 
 
-    VideoPlayUrlVO getVideoPlayUrl(Long lessonId);
+//    VideoPlayUrlVO getVideoPlayUrl(Long lessonId);
 
 }

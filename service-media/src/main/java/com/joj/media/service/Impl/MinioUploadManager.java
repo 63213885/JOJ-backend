@@ -1,4 +1,4 @@
-package com.joj.media.service;
+package com.joj.media.service.Impl;
 
 
 /**
@@ -7,12 +7,16 @@ package com.joj.media.service;
  * @createtime 2026/5/21 17:03
  */
 
-import com.joj.api.UserFeignClient;
 import com.joj.common.core.context.UserContext;
 import com.joj.common.core.exception.BusinessException;
 import com.joj.common.core.exception.ErrorCode;
+import com.joj.common.core.model.enums.MediaAccessTypeEnum;
+import com.joj.common.core.model.enums.MediaEncryptTypeEnum;
+import com.joj.common.core.model.enums.MediaTranscodeStatusEnum;
 import com.joj.media.config.MinioProperties;
 import com.joj.common.core.model.entity.MediaFile;
+import com.joj.media.service.MediaFileService;
+import com.joj.media.service.MinioObjectService;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -37,12 +41,10 @@ public class MinioUploadManager {
     @Resource
     private MinioProperties minioProperties;
     @Resource
-    private MinioClient minioClient;
+    private MinioObjectService minioObjectService;
 
     @Resource
     private MediaFileService mediaFileService;
-    @Resource
-    private UserFeignClient userFeignClient;
 
 
     private static final Tika TIKA = new Tika();
@@ -148,58 +150,56 @@ public class MinioUploadManager {
         return prefix + "/" + checkResult.getMd5() + "_" + checkResult.getFileSize() + "." + checkResult.getSuffix();
     }
 
-    private void upload(MultipartFile file, String bucketName, String objectName, String contentType) {
-        try (InputStream inputStream = file.getInputStream()) {
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .stream(inputStream, file.getSize(), -1)
-                            .contentType(contentType)
+    private void uploadAndRecord(MultipartFile file,
+                                 String bucketName,
+                                 String objectName,
+                                 FileCheckResult checkResult,
+                                 Integer accessType,
+                                 Integer transcodeStatus) {
+        boolean uploaded = false;
+        try {
+            MediaFile existFile = mediaFileService.getByBucketObject(bucketName, objectName);
+            if (existFile != null) {
+                return;
+            }
+
+            minioObjectService.putObject(
+                    file,
+                    bucketName,
+                    objectName,
+                    checkResult.getContentType()
+            );
+            uploaded = true;
+
+            mediaFileService.addMediaFile(
+                    MediaFile.builder()
+                            .originalFilename(checkResult.getOriginalFilename())
+                            .contentType(checkResult.getContentType())
+                            .md5(checkResult.getMd5())
+                            .fileSize(checkResult.getFileSize())
+                            .bucketName(bucketName)
+                            .objectName(objectName)
+                            .accessType(accessType)
+                            .transcodeStatus(transcodeStatus)
+                            .encryptType(MediaEncryptTypeEnum.NONE.getValue())
+                            .creatorId(UserContext.get().getId())
                             .build()
             );
-        } catch (Exception e) {
-            throw new RuntimeException("上传文件到 MinIO 失败", e);
-        }
-    }
-
-    private void uploadAndRecord(MultipartFile file, String bucketName, String objectName, FileCheckResult checkResult, Integer accessType) {
-        try {
-            if (mediaFileService.getByBucketObject(bucketName, objectName) == null) {
-
-                upload(file, bucketName, objectName, checkResult.getContentType());
-
-                mediaFileService.addMediaFile(
-                        MediaFile.builder()
-                                .originalFilename(checkResult.getOriginalFilename())
-                                .contentType(checkResult.getContentType())
-                                .md5(checkResult.getMd5())
-                                .fileSize(checkResult.getFileSize())
-                                .bucketName(bucketName)
-                                .objectName(objectName)
-                                .accessType(accessType)
-                                .creatorId(UserContext.get().getId())
-                                .build()
-                );
-            }
-//            userFeignClient.updateAvatar(UserContext.get().getId(), minioProperties.getBucket().getImage() + "/" + objectName);
 
         } catch (Exception e) {
-            try {
-                minioClient.removeObject(
-                        RemoveObjectArgs.builder()
-                                .bucket(bucketName)
-                                .object(objectName)
-                                .build()
-                );
-            } catch (Exception ignored) {
+            if (uploaded) {
+                try {
+                    minioObjectService.removeObject(bucketName, objectName);
+                } catch (Exception ignored) {
+                }
             }
-            throw new RuntimeException("文件上传失败", e);
+
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "文件上传失败");
         }
     }
 
     /**
-     * 上传头像，返回公开访问 URL
+     * 上传用户头像，返回公开访问 URL
      */
     @Transactional(rollbackFor = Exception.class)
     public String uploadAvatar(MultipartFile file) {
@@ -208,35 +208,37 @@ public class MinioUploadManager {
         String bucketName = minioProperties.getBucket().getImage();
         String objectName = buildObjectName("avatar", checkResult);
 
-        uploadAndRecord(file, bucketName, objectName, checkResult, 1);
+        uploadAndRecord(
+                file,
+                bucketName,
+                objectName,
+                checkResult,
+                MediaAccessTypeEnum.PUBLIC.getValue(),
+                MediaTranscodeStatusEnum.NO_NEED.getValue()
+        );
 
         return minioProperties.getBucket().getImage() + "/" + objectName;
     }
 
+    /**
+     * 上传课程头像，返回公开访问 URL
+     */
     @Transactional(rollbackFor = Exception.class)
     public String uploadCover(MultipartFile file) {
         FileCheckResult checkResult = checkFile(file, COURSE_COVER_MAX_SIZE, IMAGE_TYPE_MAP);
         String bucketName = minioProperties.getBucket().getImage();
         String objectName = buildObjectName("cover", checkResult);
 
-        uploadAndRecord(file, bucketName, objectName, checkResult, 1);
+        uploadAndRecord(
+                file,
+                bucketName,
+                objectName,
+                checkResult,
+                MediaAccessTypeEnum.PUBLIC.getValue(),
+                MediaTranscodeStatusEnum.NO_NEED.getValue()
+        );
 
         return minioProperties.getBucket().getImage() + "/" + objectName;
-    }
-
-    public String getPresignedGetUrl(String bucket, String objectKey, int expireSeconds) {
-        try {
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(bucket)
-                            .object(objectKey)
-                            .expiry(expireSeconds, TimeUnit.SECONDS)
-                            .build()
-            );
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成视频播放地址失败");
-        }
     }
 
 }

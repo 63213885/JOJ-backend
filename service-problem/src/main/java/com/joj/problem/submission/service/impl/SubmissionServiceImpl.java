@@ -5,7 +5,7 @@ import com.joj.common.core.exception.BusinessException;
 import com.joj.common.core.exception.ErrorCode;
 import com.joj.common.core.model.dto.UpdateSubmissionStatusRequest;
 import com.joj.common.core.model.enums.SubmissionStatusEnum;
-import com.joj.common.web.model.JudgeMessage;
+import com.joj.common.core.model.mq.JudgeMessage;
 import com.joj.problem.mq.JudgeMessageProducer;
 import com.joj.problem.problem.service.ProblemService;
 import com.joj.problem.submission.controller.dto.SubmissionQueryRequest;

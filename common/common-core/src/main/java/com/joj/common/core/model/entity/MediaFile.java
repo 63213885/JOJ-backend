@@ -40,6 +40,16 @@ public class MediaFile {
 
     private Long creatorId;
 
+    private Integer transcodeStatus;
+
+    private String hlsPrefix;
+
+    private Integer encryptType;
+
+    private byte[] encryptKey;
+
+    private String encryptIv;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

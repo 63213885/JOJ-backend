@@ -4,8 +4,11 @@ import com.joj.media.mapper.MediaFileMapper;
 import com.joj.common.core.model.entity.MediaFile;
 import com.joj.media.service.MediaFileService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author jzz
@@ -66,6 +69,27 @@ public class MediaFileServiceImpl implements MediaFileService {
         return mediaFileMapper.deleteMediaFileById(id) > 0;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public boolean markTranscoding(Long fileId) {
+        if (fileId == null) {
+            return false;
+        }
+        return mediaFileMapper.markTranscoding(fileId) > 0;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void markTranscodeSuccess(Long fileId, String hlsPrefix, Integer encryptType, byte[] encryptKey, String encryptIv) {
+        mediaFileMapper.markTranscodeSuccess(fileId, hlsPrefix, encryptType, encryptKey, encryptIv);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void markTranscodeFailed(Long fileId) {
+        if (fileId == null) {
+            return;
+        }
+        mediaFileMapper.markTranscodeFailed(fileId);
+    }
+
     /**
      * 判断同 bucket 下是否已存在相同文件
      */
@@ -116,6 +140,11 @@ public class MediaFileServiceImpl implements MediaFileService {
         }
 
         return mediaFileMapper.selectByBucketObject(bucketName, objectName);
+    }
+
+    @Override
+    public List<Long> listNeedRetryTranscodeFileIds(Integer retryAfterMinutes, Integer limit) {
+        return mediaFileMapper.listNeedRetryTranscodeFileIds(retryAfterMinutes, limit);
     }
 
 }

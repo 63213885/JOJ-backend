@@ -37,7 +37,7 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 
     private final CourseMapper courseMapper;
 
-    private final MediaFeignClient mediaFeignClient;
+//    private final MediaFeignClient mediaFeignClient;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -123,48 +123,48 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 
 
 
-    @Override
-    public VideoPlayUrlVO getVideoPlayUrl(Long lessonId) {
-        CourseLesson lesson = courseLessonMapper.selectCourseLessonById(lessonId);
-        if (lesson == null || lesson.getIsDeleted() == 1) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "课时不存在");
-        }
-
-        if (UserRoleEnum.fromValue(UserContext.get().getRole()) == UserRoleEnum.USER && lesson.getStatus() == 0) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "课时未开放");
-        }
-
-        Long videoFileId = lesson.getVideoFileId();
-        if (videoFileId == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "课时未绑定视频");
-        }
-
-        // 这里做权限判断
-        // 免费课：判断课程是否公开即可
-        // 付费课：判断用户是否购买课程
-        // checkCanWatchLesson(lesson);
-
-        MediaFile mediaFile = mediaFeignClient.selectMediaFileById(videoFileId);
-        if (mediaFile == null || mediaFile.getIsDeleted() == 1) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "视频文件不存在");
-        }
-
-        if (!"video/mp4".equals(mediaFile.getContentType())) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "当前视频格式不支持播放");
-        }
-
-        int expireSeconds = 5 * 60;
-
-        String playUrl = mediaFeignClient.getPresignedGetUrl(
-                mediaFile.getBucketName(),
-                mediaFile.getObjectName(),
-                expireSeconds
-        );
-
-        VideoPlayUrlVO vo = new VideoPlayUrlVO();
-        vo.setPlayUrl(playUrl);
-        vo.setExpireSeconds(expireSeconds);
-        return vo;
-    }
+//    @Override
+//    public VideoPlayUrlVO getVideoPlayUrl(Long lessonId) {
+//        CourseLesson lesson = courseLessonMapper.selectCourseLessonById(lessonId);
+//        if (lesson == null || lesson.getIsDeleted() == 1) {
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "课时不存在");
+//        }
+//
+//        if (UserRoleEnum.fromValue(UserContext.get().getRole()) == UserRoleEnum.USER && lesson.getStatus() == 0) {
+//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "课时未开放");
+//        }
+//
+//        Long videoFileId = lesson.getVideoFileId();
+//        if (videoFileId == null) {
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "课时未绑定视频");
+//        }
+//
+//        // 这里做权限判断
+//        // 免费课：判断课程是否公开即可
+//        // 付费课：判断用户是否购买课程
+//        // checkCanWatchLesson(lesson);
+//
+//        MediaFile mediaFile = mediaFeignClient.selectMediaFileById(videoFileId);
+//        if (mediaFile == null || mediaFile.getIsDeleted() == 1) {
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "视频文件不存在");
+//        }
+//
+//        if (!"video/mp4".equals(mediaFile.getContentType())) {
+//            throw new BusinessException(ErrorCode.OPERATION_ERROR, "当前视频格式不支持播放");
+//        }
+//
+//        int expireSeconds = 5 * 60;
+//
+//        String playUrl = mediaFeignClient.getPresignedGetUrl(
+//                mediaFile.getBucketName(),
+//                mediaFile.getObjectName(),
+//                expireSeconds
+//        );
+//
+//        VideoPlayUrlVO vo = new VideoPlayUrlVO();
+//        vo.setPlayUrl(playUrl);
+//        vo.setExpireSeconds(expireSeconds);
+//        return vo;
+//    }
 
 }

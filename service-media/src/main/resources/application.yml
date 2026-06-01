@@ -68,6 +68,7 @@ spring:
     password: ${joj.rabbitmq.password}
     listener:
       simple:
+        acknowledge-mode: ${joj.rabbitmq.listener.simple.acknowledge-mode}
         prefetch: ${joj.rabbitmq.listener.simple.prefetch}
 
   servlet:

@@ -71,13 +71,13 @@ public class CourseLessonController {
 
 
 
-    /**
-     * 看视频的临时url
-     */
-    @AuthCheck
-    @GetMapping("/{lessonId}/video/play-url")
-    public Result<VideoPlayUrlVO> getVideoPlayUrl(@PathVariable Long lessonId) {
-        return Result.success(courseLessonService.getVideoPlayUrl(lessonId));
-    }
+//    /**
+//     * 看视频的临时url
+//     */
+//    @AuthCheck
+//    @GetMapping("/{lessonId}/video/play-url")
+//    public Result<VideoPlayUrlVO> getVideoPlayUrl(@PathVariable Long lessonId) {
+//        return Result.success(courseLessonService.getVideoPlayUrl(lessonId));
+//    }
 
 }

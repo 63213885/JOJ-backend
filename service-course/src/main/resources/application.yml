@@ -68,6 +68,7 @@ spring:
     password: ${joj.rabbitmq.password}
     listener:
       simple:
+        acknowledge-mode: ${joj.rabbitmq.listener.simple.acknowledge-mode}
         prefetch: ${joj.rabbitmq.listener.simple.prefetch}
 
   servlet:
@@ -147,3 +148,7 @@ minio:
     video: ${joj.minio.bucket.video}
     testcase: ${joj.minio.bucket.testcase}
     document: ${joj.minio.bucket.document}
+
+video:
+  play-token-secret: joj-video-play-secret-change-me
+  play-token-expire-seconds: 600

@@ -1,6 +1,6 @@
 package com.joj.problem.mq;
 
-import com.joj.common.web.model.JudgeMessage;
+import com.joj.common.core.model.mq.JudgeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;

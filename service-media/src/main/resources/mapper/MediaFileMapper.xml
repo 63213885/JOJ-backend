@@ -20,6 +20,12 @@
         <result property="accessType" column="access_type"/>
         <result property="creatorId" column="creator_id"/>
 
+        <result property="transcodeStatus" column="transcode_status"/>
+        <result property="hlsPrefix" column="hls_prefix"/>
+        <result property="encryptType" column="encrypt_type"/>
+        <result property="encryptKey" column="encrypt_key"/>
+        <result property="encryptIv" column="encrypt_iv"/>
+
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDeleted" column="is_deleted"/>
@@ -35,6 +41,11 @@
         object_name,
         access_type,
         creator_id,
+        transcode_status,
+        hls_prefix,
+        encrypt_type,
+        encrypt_key,
+        encrypt_iv,
         create_time,
         update_time,
         is_deleted
@@ -53,7 +64,12 @@
             bucket_name,
             object_name,
             access_type,
-            creator_id
+            creator_id,
+            transcode_status,
+            hls_prefix,
+            encrypt_type,
+            encrypt_key,
+            encrypt_iv
         )
         values
             (
@@ -64,15 +80,41 @@
                 #{bucketName},
                 #{objectName},
                 #{accessType},
-                #{creatorId}
+                #{creatorId},
+                #{transcodeStatus},
+                #{hlsPrefix},
+                #{encryptType},
+                #{encryptKey},
+                #{encryptIv}
             )
     </insert>
 
     <update id="deleteMediaFileById">
         update media_file
         set is_deleted = 1
-        where id = #{id}
-          and is_deleted = 0
+        where id = #{id} and is_deleted = 0
+    </update>
+
+    <update id="markTranscoding">
+        update media_file
+        set transcode_status = 2
+        where id = #{fileId} and is_deleted = 0 and transcode_status in (1, 4)
+    </update>
+
+    <update id="markTranscodeSuccess">
+        update media_file
+        set transcode_status = 3,
+            hls_prefix = #{hlsPrefix},
+            encrypt_type = #{encryptType},
+            encrypt_key = #{encryptKey},
+            encrypt_iv = #{encryptIv}
+        where id = #{fileId} and is_deleted = 0
+    </update>
+
+    <update id="markTranscodeFailed">
+        update media_file
+        set transcode_status = 4
+        where id = #{fileId} and is_deleted = 0
     </update>
 
     <select id="selectMediaFileById" resultMap="MediaFileResultMap">
@@ -112,6 +154,16 @@
           and md5 = #{md5}
           and file_size = #{fileSize}
           and is_deleted = 0
+    </select>
+
+    <select id="listNeedRetryTranscodeFileIds" resultType="java.lang.Long">
+        select id
+        from media_file
+        where is_deleted = 0
+          and transcode_status in (1, 4)
+          and create_time &lt;= date_sub(now(), interval #{retryAfterMinutes} minute)
+        order by create_time asc
+            limit #{limit}
     </select>
 
 </mapper>

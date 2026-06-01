@@ -1,4 +1,4 @@
-package com.joj.media.service;
+package com.joj.media.service.Impl;
 
 import com.joj.common.core.model.entity.MediaUploadPart;
 import com.joj.media.config.MinioProperties;

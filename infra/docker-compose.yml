@@ -19,6 +19,7 @@ services:
     networks:
       - JojNetwork
     restart: unless-stopped
+
   # -------------------------------
   # MySQL
   # -------------------------------
@@ -165,6 +166,87 @@ services:
       exit 0;
       "
     restart: "no"
+
+  # -------------------------------
+  # XXL-JOB 初始化 SQL 下载
+  # -------------------------------
+  xxl-job-init-sql:
+    image: alpine:3.20
+    container_name: joj-xxl-job-init-sql
+    command: >
+      sh -c "
+      mkdir -p /init &&
+      if [ ! -f /init/01_tables_xxl_job.sql ]; then
+        wget -O /init/01_tables_xxl_job.sql https://raw.githubusercontent.com/xuxueli/xxl-job/2.5.0/doc/db/tables_xxl_job.sql;
+      else
+        echo 'tables_xxl_job.sql already exists, skip download';
+      fi
+      "
+    volumes:
+      - ./xxl-job-init:/init
+    restart: "no"
+
+  # -------------------------------
+  # XXL-JOB 初始化数据库
+  # -------------------------------
+  xxl-job-init-db:
+    image: mysql:8
+    container_name: joj-xxl-job-init-db
+    depends_on:
+      xxl-job-init-sql:
+        condition: service_completed_successfully
+      mysql:
+        condition: service_started
+    networks:
+      - JojNetwork
+    volumes:
+      - ./xxl-job-init:/init
+    entrypoint: >
+      /bin/sh -c "
+      until mysql -hmysql -uroot -p666666 -e 'select 1'; do
+        echo 'waiting for mysql...';
+        sleep 2;
+      done;
+
+      EXISTS=$$(mysql -hmysql -uroot -p666666 -N -e \"show databases like 'xxl_job';\");
+
+      if [ -z \"$$EXISTS\" ]; then
+        mysql -hmysql -uroot -p666666 < /init/01_tables_xxl_job.sql;
+        echo 'xxl-job db initialized';
+      else
+        echo 'xxl_job database already exists, skip init';
+      fi;
+
+      exit 0;
+      "
+    restart: "no"
+
+  # -------------------------------
+  # XXL-JOB Admin
+  # -------------------------------
+  xxl-job-admin:
+    image: xuxueli/xxl-job-admin:2.5.0
+    container_name: joj-xxl-job-admin
+    depends_on:
+      xxl-job-init-db:
+        condition: service_completed_successfully
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+      PARAMS: >
+        --spring.datasource.url=jdbc:mysql://mysql:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+        --spring.datasource.username=root
+        --spring.datasource.password=666666
+        --xxl.job.accessToken=joj_xxl_job_token
+        --xxl.job.i18n=zh_CN
+        --xxl.job.logretentiondays=30
+    ports:
+      - "8088:8080"
+    volumes:
+      - ./xxl-job-admin/logs:/data/applogs
+    networks:
+      - JojNetwork
+    restart: unless-stopped
 
 
 

@@ -289,7 +289,7 @@ public class LargeFileUploadServiceImpl implements LargeFileUploadService {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                videoTranscodeProducer.send(finalMediaFile.getId());
+//                videoTranscodeProducer.send(finalMediaFile.getId());
             }
         });
 

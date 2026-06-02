@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @createtime 2026/5/21 16:56
  */
 
-@EnableScheduling
+//@EnableScheduling
 @EnableFeignClients("com.joj.api")
 @EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = "com.joj")

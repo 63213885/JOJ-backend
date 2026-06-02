@@ -148,3 +148,16 @@ minio:
     video: ${joj.minio.bucket.video}
     testcase: ${joj.minio.bucket.testcase}
     document: ${joj.minio.bucket.document}
+
+xxl:
+  job:
+    admin:
+      addresses: ${joj.xxl.job.admin.addresses}
+    accessToken: ${joj.xxl.job.accessToken}
+    executor:
+      appname: ${joj.xxl.job.executor.appname}
+      address:
+      ip:
+      port: ${joj.xxl.job.executor.port}
+      logpath: ${joj.xxl.job.executor.logpath}
+      logretentiondays: ${joj.xxl.job.executor.logretentiondays}

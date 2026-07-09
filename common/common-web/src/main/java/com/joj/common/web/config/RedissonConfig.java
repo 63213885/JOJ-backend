@@ -20,6 +20,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 
 @Configuration
 public class RedissonConfig {
+
     @Value("${counter.rebuild.lock.watchdog-ms:30000}")
     private long lockWatchdogMs;
 

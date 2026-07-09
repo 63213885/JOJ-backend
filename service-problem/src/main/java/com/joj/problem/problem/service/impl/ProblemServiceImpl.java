@@ -103,4 +103,12 @@ public class ProblemServiceImpl implements ProblemService {
         return problemMapper.total(isAdmin);
     }
 
+    @Transactional
+    @Override
+    public List<Long> listIds(long offset, long limit, String sortField, String sortOrder) {
+        List<User> users = problemMapper.selectProblemPageByStatus(offset, limit, sortField, sortOrder);
+        List<Long> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
+        return userIds;
+    }
+
 }

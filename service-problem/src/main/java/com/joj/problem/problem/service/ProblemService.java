@@ -29,4 +29,6 @@ public interface ProblemService {
 
     Integer total();
 
+    List<Long> listIds(long offset, long limit, String sortField, String sortOrder);
+
 }

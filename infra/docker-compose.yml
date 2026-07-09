@@ -49,7 +49,7 @@ services:
   redis:
     image: redis:6
     container_name: joj-redis
-    command: redis-server --requirepass "666666"
+    command: redis-server --requirepass "666666" --appendonly yes --appendfsync everysec
     ports:
       - "6379:6379"
     volumes:

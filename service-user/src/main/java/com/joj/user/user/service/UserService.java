@@ -61,7 +61,9 @@ public interface UserService {
 
     List<User> listByIds(List<Long> ids);
 
-    List<UserVO> listUsers(int offset, int limit, String sortField, String sortOrder);
+    List<Long> listIds(long offset, long limit, String sortField, String sortOrder);
+
+    List<UserVO> listUsers(long offset, long limit, String sortField, String sortOrder);
 
     int total();
 

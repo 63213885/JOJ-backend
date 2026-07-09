@@ -163,11 +163,11 @@
         </choose>
 
         <choose>
-            <when test="sortOrder == 'ascend' or sortOrder == 'asc'">
-                asc
+            <when test="sortOrder == 'descend' or sortOrder == 'desc'">
+                desc
             </when>
             <otherwise>
-                desc
+                asc
             </otherwise>
         </choose>
 

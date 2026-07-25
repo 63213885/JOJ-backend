@@ -72,3 +72,13 @@ coverage/
 
 application-dev.yml
 application-prod.yml
+
+
+ip2region_v4.xdb
+ip2region_v6.xdb
+ipv4_source.txt
+ipv6_source.txt
+
+
+### infra/data/ ###
+infra/data/

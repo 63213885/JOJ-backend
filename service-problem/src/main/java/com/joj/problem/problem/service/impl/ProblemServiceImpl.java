@@ -84,7 +84,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Transactional
     @Override
-    public List<ProblemVO> getProblemList(Integer limit, Integer offset) {
+    public List<ProblemVO> getProblemList(Long limit, Long offset) {
         User user = UserContext.get();
         Boolean isAdmin = user != null && UserRoleEnum.fromValue(user.getRole()) == UserRoleEnum.ADMIN;
         List<Problem> problems = problemMapper.selectProblemPageByStatus(limit, offset, isAdmin);
@@ -105,10 +105,10 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Transactional
     @Override
-    public List<Long> listIds(long offset, long limit, String sortField, String sortOrder) {
-        List<User> users = problemMapper.selectProblemPageByStatus(offset, limit, sortField, sortOrder);
-        List<Long> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
-        return userIds;
+    public List<Long> listIds(Long offset, Long limit, String sortField, String sortOrder) {
+        List<Problem> problems = problemMapper.selectProblemPageByStatus(offset, limit, true);
+        List<Long> problemIds = problems.stream().map(problem -> problem.getId()).collect(Collectors.toList());
+        return problemIds;
     }
 
 }

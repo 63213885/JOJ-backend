@@ -31,11 +31,11 @@ public class ProblemBloomLoader implements ApplicationRunner {
         bloomFilterManager.init(BloomFilterTypeEnum.PROBLEM_ID);
 
         long lastId = 0L;
-        int limit = 1000;
+        long limit = 1000L;
         long total = 0L;
 
         while (true) {
-            List<Long> ids = problemService.listIds(lastId, limit);
+            List<Long> ids = problemService.listIds(lastId, limit, null, null);
             if (ids == null || ids.isEmpty()) {
                 break;
             }

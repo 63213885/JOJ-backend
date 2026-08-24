@@ -25,10 +25,10 @@ public interface ProblemService {
 
     ProblemVO getProblemVOById(Long id);
 
-    List<ProblemVO> getProblemList(Integer limit, Integer offset);
+    List<ProblemVO> getProblemList(Long limit, Long offset);
 
     Integer total();
 
-    List<Long> listIds(long offset, long limit, String sortField, String sortOrder);
+    List<Long> listIds(Long offset, Long limit, String sortField, String sortOrder);
 
 }

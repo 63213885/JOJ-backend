@@ -11,13 +11,8 @@ import lombok.Getter;
 @Getter
 public enum BloomFilterTypeEnum {
 
-    USER_ID("joj:bloom:user:id", 1_000_000L, 0.001),
-
-    PROBLEM_ID("joj:bloom:problem:id", 1_000_000L, 0.001),
-
-    COURSE_ID("joj:bloom:course:id", 100_000L, 0.001),
-
-    LESSON_ID("joj:bloom:lesson:id", 500_000L, 0.001);
+    USER_ID("bloom:user:id", 1_000_000L, 0.001),
+    PROBLEM_ID("bloom:problem:id", 50_000L, 0.001);
 
     private final String key;
 

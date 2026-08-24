@@ -64,8 +64,8 @@ public class ProblemController {
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
 
-        int offset = (current - 1) * pageSize;
-        int limit = pageRequest.getPageSize();
+        long offset = (current - 1) * pageSize;
+        long limit = pageRequest.getPageSize();
         List<ProblemVO> problems = problemService.getProblemList(limit, offset);
         return Result.success(
                 PageResponse.<ProblemVO>builder()

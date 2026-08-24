@@ -31,7 +31,7 @@ public interface ProblemMapper {
     // 查
     Problem findById(@Param("id") Long id);
 
-    List<Problem> selectProblemPageByStatus(@Param("limit") Integer limit, @Param("offset") Integer offset, @Param("isAdmin") Boolean isAdmin);
+    List<Problem> selectProblemPageByStatus(@Param("limit") Long limit, @Param("offset") Long offset, @Param("isAdmin") Boolean isAdmin);
 
     Integer total(@Param("isAdmin") Boolean isAdmin);
 

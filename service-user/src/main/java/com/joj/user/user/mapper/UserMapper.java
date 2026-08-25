@@ -45,10 +45,10 @@ public interface UserMapper {
     /**
      * 分页查询用户
      */
-    List<User> selectUserPage(@Param("offset") long offset,
-                              @Param("limit") long limit,
+    List<User> selectUserPage(@Param("offset") Long offset,
+                              @Param("limit") Long limit,
                               @Param("sortField") String sortField,
                               @Param("sortOrder") String sortOrder);
 
-    int total();
+    Long total();
 }

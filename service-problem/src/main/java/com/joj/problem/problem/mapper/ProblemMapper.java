@@ -16,23 +16,23 @@ import java.util.List;
 public interface ProblemMapper {
 
     // 增
-    int insert(Problem problem);
+    Long insert(Problem problem);
 
     // 删
-    int deleteById(@Param("id") Long id);
+    Long deleteById(@Param("id") Long id);
 
     // 改
-    int updateById(Problem problem);
+    Long updateById(Problem problem);
 
-    int incrementSubmitCount(@Param("id") Long id);
+    Long incrementSubmitCount(@Param("id") Long id);
 
-    int incrementAcceptedCount(@Param("id") Long id);
+    Long incrementAcceptedCount(@Param("id") Long id);
 
     // 查
     Problem findById(@Param("id") Long id);
 
     List<Problem> selectProblemPageByStatus(@Param("limit") Long limit, @Param("offset") Long offset, @Param("isAdmin") Boolean isAdmin);
 
-    Integer total(@Param("isAdmin") Boolean isAdmin);
+    Long total(@Param("isAdmin") Boolean isAdmin);
 
 }

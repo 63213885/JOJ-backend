@@ -27,7 +27,7 @@ public interface ProblemService {
 
     List<ProblemVO> getProblemList(Long limit, Long offset);
 
-    Integer total();
+    Long total();
 
     List<Long> listIds(Long offset, Long limit, String sortField, String sortOrder);
 

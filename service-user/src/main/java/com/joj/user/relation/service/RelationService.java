@@ -14,18 +14,18 @@ import java.util.Map;
 
 public interface RelationService {
 
-    boolean follow(long fromUserId, long toUserId);
+    Boolean follow(Long fromUserId, Long toUserId);
 
-    boolean unfollow(long fromUserId, long toUserId);
+    Boolean unfollow(Long fromUserId, Long toUserId);
 
-    Map<String, Boolean> relationStatus(long userId, long otherUserId);
+    Map<String, Boolean> relationStatus(Long userId, Long otherUserId);
 
-    List<UserVO> followingProfiles(long userId, int limit, int offset);
+    List<UserVO> followingProfiles(Long userId, Long limit, Long offset);
 
-    List<UserVO> followersProfiles(long userId, int limit, int offset);
+    List<UserVO> followersProfiles(Long userId, Long limit, Long offset);
 
-    int totalFollowers(long userId);
+    Long totalFollowers(Long userId);
 
-    int totalFollowing(long userId);
+    Long totalFollowing(Long userId);
 
 }

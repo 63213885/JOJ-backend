@@ -50,8 +50,8 @@ public interface UserStatsMapper {
 
     List<UserStats> selectUserStatsByIds(@Param("userIds") List<Long> userIds);
 
-    int selectFollowerCount(@Param("userId") Long userId);
+    Long selectFollowerCount(@Param("userId") Long userId);
 
-    int selectFollowingCount(@Param("userId") Long userId);
+    Long selectFollowingCount(@Param("userId") Long userId);
 
 }

@@ -34,7 +34,7 @@ public interface SubmissionService {
 
 //    List<Submission> listSubmissions(SubmissionQueryRequest submissionQueryRequest, Integer offset, Integer limit);
 
-    List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest, Integer offset, Integer limit);
+    List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest, Long offset, Long limit);
 
     Boolean rejudgeSubmission(Long submissionId);
 

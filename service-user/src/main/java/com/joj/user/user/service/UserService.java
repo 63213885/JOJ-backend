@@ -61,10 +61,10 @@ public interface UserService {
 
     List<User> listByIds(List<Long> ids);
 
-    List<Long> listIds(long offset, long limit, String sortField, String sortOrder);
+    List<Long> listIds(Long offset, Long limit, String sortField, String sortOrder);
 
-    List<UserVO> listUsers(long offset, long limit, String sortField, String sortOrder);
+    List<UserVO> listUsers(Long offset, Long limit, String sortField, String sortOrder);
 
-    int total();
+    Long total();
 
 }

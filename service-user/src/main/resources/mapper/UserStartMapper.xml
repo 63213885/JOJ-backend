@@ -155,13 +155,13 @@
         </foreach>
     </select>
 
-    <select id="selectFollowerCount" resultType="java.lang.Integer">
+    <select id="selectFollowerCount" resultType="java.lang.Long">
         SELECT follower_count
         FROM user_stats
         WHERE user_id = #{userId}
     </select>
 
-    <select id="selectFollowingCount" resultType="java.lang.Integer">
+    <select id="selectFollowingCount" resultType="java.lang.Long">
         SELECT following_count
         FROM user_stats
         WHERE user_id = #{userId}

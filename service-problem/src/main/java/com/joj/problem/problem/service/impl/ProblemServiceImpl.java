@@ -97,7 +97,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Transactional
     @Override
-    public Integer total() {
+    public Long total() {
         User user = UserContext.get();
         Boolean isAdmin = user != null && UserRoleEnum.fromValue(user.getRole()) == UserRoleEnum.ADMIN;
         return problemMapper.total(isAdmin);

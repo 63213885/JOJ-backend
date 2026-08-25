@@ -231,14 +231,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public List<Long> listIds(long offset, long limit, String sortField, String sortOrder) {
+    public List<Long> listIds(Long offset, Long limit, String sortField, String sortOrder) {
         List<User> users = userMapper.selectUserPage(offset, limit, sortField, sortOrder);
         List<Long> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
         return userIds;
     }
 
     @Transactional
-    public List<UserVO> listUsers(long offset, long limit, String sortField, String sortOrder) {
+    public List<UserVO> listUsers(Long offset, Long limit, String sortField, String sortOrder) {
         List<User> users = userMapper.selectUserPage(offset, limit, sortField, sortOrder);
 //        List<Long> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
 //        List<UserStats> userStats = userStatsService.selectUserStatsByIds(userIds);
@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public int total() {
+    public Long total() {
         return userMapper.total();
     }
 

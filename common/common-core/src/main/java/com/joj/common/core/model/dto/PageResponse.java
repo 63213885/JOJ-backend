@@ -31,6 +31,6 @@ public class PageResponse<T> implements Serializable {
     /**
      * 总数据量
      */
-    private Integer total;
+    private Long total;
 
 }

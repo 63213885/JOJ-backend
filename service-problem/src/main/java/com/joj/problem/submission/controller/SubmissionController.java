@@ -67,13 +67,13 @@ public class SubmissionController {
     @GetMapping("/list")
     public Result<PageResponse<SubmissionVO>> listSubmissions(@Valid PageRequest pageRequest, SubmissionQueryRequest request) {
         log.info("SubmissionQueryRequest =  {}", request);
-        int current = pageRequest.getCurrent();
-        int pageSize = pageRequest.getPageSize();
+        Long current = pageRequest.getCurrent();
+        Long pageSize = pageRequest.getPageSize();
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
 
-        int offset = (current - 1) * pageSize;
-        int limit = pageSize;
+        Long offset = (current - 1) * pageSize;
+        Long limit = pageSize;
         List<SubmissionVO> list = submissionService.listSubmissionVO(request, offset, limit);
         log.info("listSubmissions =  {}", list);
         return Result.success(

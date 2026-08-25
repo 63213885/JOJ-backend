@@ -59,13 +59,13 @@ public class ProblemController {
 
     @GetMapping("/list")
     public Result<PageResponse<ProblemVO>> getProblemList(@Valid PageRequest pageRequest) {
-        int current = pageRequest.getCurrent();
-        int pageSize = pageRequest.getPageSize();
+        Long current = pageRequest.getCurrent();
+        Long pageSize = pageRequest.getPageSize();
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
 
-        long offset = (current - 1) * pageSize;
-        long limit = pageRequest.getPageSize();
+        Long offset = (current - 1) * pageSize;
+        Long limit = pageRequest.getPageSize();
         List<ProblemVO> problems = problemService.getProblemList(limit, offset);
         return Result.success(
                 PageResponse.<ProblemVO>builder()

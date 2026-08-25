@@ -83,15 +83,15 @@ public class UserController {
 
     @GetMapping("/list")
     public Result<PageResponse<UserVO>> listUserPage(@Valid PageRequest pageRequest) {
-        int current = pageRequest.getCurrent();
-        int pageSize = pageRequest.getPageSize();
+        Long current = pageRequest.getCurrent();
+        Long pageSize = pageRequest.getPageSize();
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
 
-        int offset = (current - 1) * pageSize;
-        int limit = pageSize;
+        Long offset = (current - 1) * pageSize;
+        Long limit = pageSize;
         List<UserVO> users = userService.listUsers(offset, limit, sortField, sortOrder);
-        int total = userService.total();
+        Long total = userService.total();
         return Result.success(
                 PageResponse.<UserVO>builder()
                         .records(users)

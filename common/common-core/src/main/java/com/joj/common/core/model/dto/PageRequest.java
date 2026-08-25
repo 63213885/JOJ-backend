@@ -29,14 +29,14 @@ public class PageRequest implements Serializable {
      * 当前页号
      */
     @Min(value = 1, message = "当前页号必须大于或等于1")
-    private int current = 1;
+    private Long current = 1L;
 
     /**
      * 页面大小
      */
     @Min(value = 1, message = "页面大小必须大于或等于1")
     @Max(value = 100, message = "页面大小必须小于或等于100")
-    private int pageSize = 10;
+    private Long pageSize = 10L;
 
     /**
      * 排序字段

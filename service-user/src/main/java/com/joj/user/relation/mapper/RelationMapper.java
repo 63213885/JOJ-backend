@@ -16,23 +16,23 @@ import java.util.Map;
 @Mapper
 public interface RelationMapper {
 
-    int insertFollowing(@Param("id") Long id, @Param("fromUserId") Long fromUserId, @Param("toUserId") Long toUserId, @Param("relStatus") Integer relStatus);
+    Long insertFollowing(@Param("id") Long id, @Param("fromUserId") Long fromUserId, @Param("toUserId") Long toUserId, @Param("relStatus") Integer relStatus);
 
-    int cancelFollowing(@Param("fromUserId") Long fromUserId, @Param("toUserId") Long toUserId);
+    Long cancelFollowing(@Param("fromUserId") Long fromUserId, @Param("toUserId") Long toUserId);
 
-    int existsFollowing(@Param("fromUserId") Long fromUserId, @Param("toUserId") Long toUserId);
+    Long existsFollowing(@Param("fromUserId") Long fromUserId, @Param("toUserId") Long toUserId);
 
-    List<Long> listFollowing(@Param("fromUserId") Long fromUserId, @Param("limit") int limit, @Param("offset") int offset);
+    List<Long> listFollowing(@Param("fromUserId") Long fromUserId, @Param("limit") Long limit, @Param("offset") Long offset);
 
-    List<Long> listFollowers(@Param("toUserId") Long toUserId, @Param("limit") int limit, @Param("offset") int offset);
+    List<Long> listFollowers(@Param("toUserId") Long toUserId, @Param("limit") Long limit, @Param("offset") Long offset);
 
     @MapKey("toUserId")
-    Map<Long, Map<String, Object>> listFollowingRows(@Param("fromUserId") Long fromUserId, @Param("limit") int limit, @Param("offset") int offset);
+    Map<Long, Map<String, Object>> listFollowingRows(@Param("fromUserId") Long fromUserId, @Param("limit") Long limit, @Param("offset") Long offset);
 
     @MapKey("fromUserId")
-    Map<Long, Map<String, Object>> listFollowerRows(@Param("toUserId") Long toUserId, @Param("limit") int limit, @Param("offset") int offset);
+    Map<Long, Map<String, Object>> listFollowerRows(@Param("toUserId") Long toUserId, @Param("limit") Long limit, @Param("offset") Long offset);
 
-    int countFollowingActive(@Param("fromUserId") Long fromUserId);
+    Long countFollowingActive(@Param("fromUserId") Long fromUserId);
 
-    int countFollowerActive(@Param("toUserId") Long toUserId);
+    Long countFollowerActive(@Param("toUserId") Long toUserId);
 }

@@ -138,7 +138,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Transactional
     @Override
-    public List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest, Integer offset, Integer limit) {
+    public List<SubmissionVO> listSubmissionVO(SubmissionQueryRequest submissionQueryRequest, Long offset, Long limit) {
         List<Submission> listSubmission = submissionMapper.listSubmissions(submissionQueryRequest, offset, limit);
         log.info("listSubmission =  {}", listSubmission);
         return listSubmission.stream().map(submission -> {
@@ -174,7 +174,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public Boolean rejudgeListSubmissions(SubmissionQueryRequest submissionQueryRequest) {
         Long lastId = 0L;
-        Integer limit = 100;
+        Long limit = 100L;
 
         while (true) {
             List<Long> ids = submissionMapper.listIds(submissionQueryRequest, lastId, limit);

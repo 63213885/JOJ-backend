@@ -33,8 +33,7 @@
     </resultMap>
 
     <sql id="BaseColumnList">
-        id
-        ,
+        id,
         title,
         content,
         input_desc,
@@ -156,7 +155,7 @@
         order by id asc limit #{offset}, #{limit}
     </select>
 
-    <select id="total" resultType="java.lang.Integer">
+    <select id="total" resultType="java.lang.Long">
         select count(*)
         from problem
         where is_delete = 0

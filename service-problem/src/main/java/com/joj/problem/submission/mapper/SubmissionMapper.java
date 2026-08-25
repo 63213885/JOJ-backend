@@ -33,9 +33,9 @@ public interface SubmissionMapper {
     Submission getSubmissionById(@Param("id") Long id);
 
     List<Submission> listSubmissions(@Param("submissionQueryRequest") SubmissionQueryRequest submissionQueryRequest,
-                                     @Param("offset") Integer offset, @Param("limit") Integer limit);
+                                     @Param("offset") Long offset, @Param("limit") Long limit);
 
     List<Long> listIds(@Param("submissionQueryRequest") SubmissionQueryRequest submissionQueryRequest,
-                                     @Param("lastId") Long lastId, @Param("limit") Integer limit);
+                                     @Param("lastId") Long lastId, @Param("limit") Long limit);
 
 }

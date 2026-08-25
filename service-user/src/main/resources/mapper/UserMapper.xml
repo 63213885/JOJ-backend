@@ -174,7 +174,7 @@
         limit #{offset}, #{limit}
     </select>
 
-    <select id="total" resultType="java.lang.Integer">
+    <select id="total" resultType="java.lang.Long">
         select count(*)
         from user
         where is_delete = 0

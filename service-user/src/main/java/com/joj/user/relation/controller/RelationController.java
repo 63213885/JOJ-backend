@@ -59,16 +59,16 @@ public class RelationController {
     @AuthCheck
     @GetMapping("/following")
     public Result<PageResponse<UserVO>> following(@RequestParam Long userId, @Valid PageRequest pageRequest) {
-        int current = pageRequest.getCurrent();
-        int pageSize = pageRequest.getPageSize();
+        Long current = pageRequest.getCurrent();
+        Long pageSize = pageRequest.getPageSize();
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
 
-        int limit = pageSize;
-        int offset = (current - 1) * pageSize;
-        long targetId = userId != null ? userId : UserContext.get().getId();
+        Long limit = pageSize;
+        Long offset = (current - 1) * pageSize;
+        Long targetId = userId != null ? userId : UserContext.get().getId();
         List<UserVO> followingProfiles = relationService.followingProfiles(targetId, limit, offset);
-        int total = relationService.totalFollowing(targetId);
+        Long total = relationService.totalFollowing(targetId);
         return Result.success(
                 PageResponse.<UserVO>builder()
                         .records(followingProfiles)
@@ -80,16 +80,16 @@ public class RelationController {
     @AuthCheck
     @GetMapping("/followers")
     public Result<PageResponse<UserVO>> followers(@RequestParam Long userId, @Valid PageRequest pageRequest) {
-        int current = pageRequest.getCurrent();
-        int pageSize = pageRequest.getPageSize();
+        Long current = pageRequest.getCurrent();
+        Long pageSize = pageRequest.getPageSize();
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
 
-        int limit = pageSize;
-        int offset = (current - 1) * pageSize;
-        long targetId = userId != null ? userId : UserContext.get().getId();
+        Long limit = pageSize;
+        Long offset = (current - 1) * pageSize;
+        Long targetId = userId != null ? userId : UserContext.get().getId();
         List<UserVO> followersProfiles = relationService.followersProfiles(targetId, limit, offset);
-        int total = relationService.totalFollowers(targetId);
+        Long total = relationService.totalFollowers(targetId);
         return Result.success(
                 PageResponse.<UserVO>builder()
                         .records(followersProfiles)

@@ -43,8 +43,8 @@ public interface UserStatsService {
 
     List<UserStats> selectUserStatsByIds(List<Long> userIds);
 
-    int selectFollowerCount(Long userId);
+    Long selectFollowerCount(Long userId);
 
-    int selectFollowingCount(Long userId);
+    Long selectFollowingCount(Long userId);
 
 }

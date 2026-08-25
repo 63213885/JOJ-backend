@@ -11,6 +11,7 @@ import com.joj.user.relation.service.RelationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,12 +39,12 @@ public class RelationServiceImpl implements RelationService {
 
     @Transactional
     @Override
-    public boolean follow(long fromUserId, long toUserId) {
+    public Boolean follow(Long fromUserId, Long toUserId) {
         if (isFollowing(fromUserId, toUserId)) {
             throw new BusinessException(ErrorCode.API_REQUEST_ERROR, "已关注");
         }
-        long id = ThreadLocalRandom.current().nextLong(Long.MAX_VALUE);
-        int inserted = relationMapper.insertFollowing(id, fromUserId, toUserId, 1);
+        Long id = ThreadLocalRandom.current().nextLong(Long.MAX_VALUE);
+        Long inserted = relationMapper.insertFollowing(id, fromUserId, toUserId, 1);
         userStatsService.updateFollowingCount(fromUserId, 1);
         userStatsService.updateFollowerCount(toUserId, 1);
         return inserted > 0;
@@ -51,27 +52,27 @@ public class RelationServiceImpl implements RelationService {
 
     @Transactional
     @Override
-    public boolean unfollow(long fromUserId, long toUserId) {
+    public Boolean unfollow(Long fromUserId, Long toUserId) {
         if (!isFollowing(fromUserId, toUserId)) {
             throw new BusinessException(ErrorCode.API_REQUEST_ERROR, "未关注");
         }
-        int deleted = relationMapper.cancelFollowing(fromUserId, toUserId);
+        Long deleted = relationMapper.cancelFollowing(fromUserId, toUserId);
         userStatsService.updateFollowingCount(fromUserId, -1);
         userStatsService.updateFollowerCount(toUserId, -1);
         return deleted > 0;
     }
 
-    private boolean isFollowing(long fromUserId, long toUserId) {
-        int count = relationMapper.existsFollowing(fromUserId, toUserId);
+    private Boolean isFollowing(Long fromUserId, Long toUserId) {
+        Long count = relationMapper.existsFollowing(fromUserId, toUserId);
         return count > 0;
     }
 
     @Transactional
     @Override
-    public Map<String, Boolean> relationStatus(long userId, long otherUserId) {
-        boolean following = isFollowing(userId, otherUserId);
-        boolean followedBy = isFollowing(otherUserId, userId);
-        boolean mutual = following && followedBy;
+    public Map<String, Boolean> relationStatus(Long userId, Long otherUserId) {
+        Boolean following = isFollowing(userId, otherUserId);
+        Boolean followedBy = isFollowing(otherUserId, userId);
+        Boolean mutual = following && followedBy;
         Map<String, Boolean> m = new LinkedHashMap<>();
         m.put("following", following);
         m.put("followedBy", followedBy);
@@ -90,35 +91,35 @@ public class RelationServiceImpl implements RelationService {
         return userVOS;
     }
 
-    private List<Long> following(long userId, int limit, int offset) {
+    private List<Long> following(Long userId, Long limit, Long offset) {
         return relationMapper.listFollowing(userId, limit, offset);
     }
 
     @Transactional
     @Override
-    public List<UserVO> followingProfiles(long userId, int limit, int offset) {
+    public List<UserVO> followingProfiles(Long userId, Long limit, Long offset) {
         List<Long> ids = following(userId, limit, offset);
         return toProfiles(ids);
     }
 
-    private List<Long> followers(long userId, int limit, int offset) {
+    private List<Long> followers(Long userId, Long limit, Long offset) {
         return relationMapper.listFollowers(userId, limit, offset);
     }
 
     @Transactional
     @Override
-    public List<UserVO> followersProfiles(long userId, int limit, int offset) {
+    public List<UserVO> followersProfiles(Long userId, Long limit, Long offset) {
         List<Long> ids = followers(userId, limit, offset);
         return toProfiles(ids);
     }
 
     @Transactional
-    public int totalFollowers(long userId) {
+    public Long totalFollowers(Long userId) {
         return userStatsService.selectFollowerCount(userId);
     }
 
     @Transactional
-    public int totalFollowing(long userId) {
+    public Long totalFollowing(Long userId) {
         return userStatsService.selectFollowingCount(userId);
     }
 
